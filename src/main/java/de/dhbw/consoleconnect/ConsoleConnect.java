@@ -5,6 +5,7 @@ import de.dhbw.consoleconnect.server.Server;
 
 public class ConsoleConnect {
     private final static String COMPONENT = System.getenv("COMPONENT");
+    private final static boolean IGNORE_CLIENT_CONFIGURATION = Boolean.valueOf(System.getenv("IGNORE_CLIENT_CONFIGURATION"));
 
     public static void main(final String[] arguments) {
         System.out.println("[INFO] Starting ConsoleConnect application...");
@@ -15,7 +16,7 @@ public class ConsoleConnect {
                 server.start();
             } else if (COMPONENT.equalsIgnoreCase("client")) {
                 System.out.println("[INFO] Found ConsoleConnect component: 'client'");
-                final Client client = new Client();
+                final Client client = new Client(IGNORE_CLIENT_CONFIGURATION);
                 client.connect();
             } else {
                 System.out.println("[ERROR] Unknown ConsoleConnect component found: " + COMPONENT);

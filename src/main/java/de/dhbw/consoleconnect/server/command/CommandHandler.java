@@ -3,6 +3,7 @@ package de.dhbw.consoleconnect.server.command;
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
 import de.dhbw.consoleconnect.server.command.registry.HelpCommand;
+import de.dhbw.consoleconnect.server.command.registry.SaveCommand;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,8 +11,8 @@ import java.util.Map;
 
 public class CommandHandler {
 
-    private final Map<String, Command> commands = new LinkedHashMap<>();
     private final Server server;
+    private final Map<String, Command> commands = new LinkedHashMap<>();
 
     public CommandHandler(final Server server) {
         this.server = server;
@@ -21,6 +22,9 @@ public class CommandHandler {
     private void registerCommands() {
         final HelpCommand helpCommand = new HelpCommand();
         this.commands.put(helpCommand.getName(), helpCommand);
+
+        final SaveCommand saveCommand = new SaveCommand();
+        this.commands.put(saveCommand.getName(), saveCommand);
     }
 
     public void handleCommand(final ServerClientThread client, final String commandLine) {

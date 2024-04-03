@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class Server {
 
-    private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
     private final CommandHandler commandHandler;
+    private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
 
     public Server() {
         this.commandHandler = new CommandHandler(this);
