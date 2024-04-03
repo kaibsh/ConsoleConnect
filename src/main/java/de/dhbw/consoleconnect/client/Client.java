@@ -1,5 +1,7 @@
 package de.dhbw.consoleconnect.client;
 
+import de.dhbw.consoleconnect.client.file.PropertiesFile;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -7,13 +9,21 @@ import java.util.Scanner;
 
 public class Client {
 
+    private final PropertiesFile propertiesFile;
     private final Scanner scanner;
     private final String clientName;
 
-    public Client() {
+    public Client(final boolean ignoreClientConfiguration) {
+        this.propertiesFile = new PropertiesFile();
         this.scanner = new Scanner(System.in);
-        System.out.println("Please enter your name: ");
-        this.clientName = scanner.nextLine();
+        if (!ignoreClientConfiguration && this.propertiesFile.getProperties().containsKey("client.name")) {
+            this.clientName = this.propertiesFile.getProperties().getProperty("client.name");
+        } else {
+            System.out.println("Please enter your name: ");
+            this.clientName = scanner.nextLine();
+            this.propertiesFile.getProperties().put("client.name", this.clientName);
+            this.propertiesFile.save();
+        }
     }
 
     public void connect() {
@@ -29,7 +39,13 @@ public class Client {
             printWriter.println("[HANDSHAKE] <-> " + this.clientName);
 
             while (clientThread.isAlive()) {
-                printWriter.println(scanner.nextLine());
+                final String input = scanner.nextLine();
+                if (input != null && !input.isBlank()) {
+                    if (input.startsWith("/")) {
+                        clientThread.getMessages().add(input);
+                    }
+                    printWriter.println(input);
+                }
             }
         } catch (final IOException exception) {
             exception.printStackTrace();
