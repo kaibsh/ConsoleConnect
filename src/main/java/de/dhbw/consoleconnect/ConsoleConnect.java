@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect;
 
-import de.dhbw.consoleconnect.client.ChatClient;
-import de.dhbw.consoleconnect.server.ChatServer;
+import de.dhbw.consoleconnect.client.Client;
+import de.dhbw.consoleconnect.server.Server;
 
 public class ConsoleConnect {
     private final static String COMPONENT = System.getenv("COMPONENT");
@@ -11,12 +11,12 @@ public class ConsoleConnect {
         if (COMPONENT != null && !COMPONENT.isEmpty()) {
             if (COMPONENT.equalsIgnoreCase("server")) {
                 System.out.println("[INFO] Found ConsoleConnect component: 'server'");
-                final ChatServer chatServer = new ChatServer();
-                chatServer.start();
+                final Server server = new Server();
+                server.start();
             } else if (COMPONENT.equalsIgnoreCase("client")) {
                 System.out.println("[INFO] Found ConsoleConnect component: 'client'");
-                final ChatClient chatClient = new ChatClient();
-                chatClient.connect();
+                final Client client = new Client();
+                client.connect();
             } else {
                 System.out.println("[ERROR] Unknown ConsoleConnect component found: " + COMPONENT);
                 System.out.println("[ERROR] Please provide one of the following environment variables: 'COMPONENT=server' or 'COMPONENT=client'");

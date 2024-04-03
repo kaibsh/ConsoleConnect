@@ -6,16 +6,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ChatServerThread extends Thread {
+public class ServerClientThread extends Thread {
 
-    private final ChatServer chatServer;
+    private final Server server;
     private final Socket socket;
     private final BufferedReader bufferedReader;
     private final PrintWriter printWriter;
     private String clientName;
 
-    public ChatServerThread(final ChatServer chatServer, final Socket socket) throws IOException {
-        this.chatServer = chatServer;
+    public ServerClientThread(final Server server, final Socket socket) throws IOException {
+        this.server = server;
         this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.printWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -28,17 +28,17 @@ public class ChatServerThread extends Thread {
             while (!socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null) {
-                    System.out.println(message);
                     if (this.clientName == null && message.startsWith("[HANDSHAKE] <->")) {
                         final String handshakeClientName = message.substring(16);
                         if (!handshakeClientName.isBlank()) {
                             this.clientName = handshakeClientName;
-                            if (!this.chatServer.containsClient(this.clientName)) {
+                            if (!this.server.containsClient(this.clientName)) {
                                 this.connectClient(this.clientName);
+                                System.out.println(message);
                             }
                         }
                     } else {
-                        this.chatServer.broadcastMessage(message);
+                        this.server.handleMessage(this, message);
                     }
                 } else {
                     break;
@@ -52,17 +52,21 @@ public class ChatServerThread extends Thread {
     }
 
     public void sendMessage(final String message) {
-
+        if (message != null && !message.isBlank()) {
+            this.printWriter.println(message);
+        }
     }
 
     public void connectClient(final String clientName) {
-        this.chatServer.addClient(clientName, this);
-        this.chatServer.broadcastMessage("-> " + clientName + "has connected to the chat-server!");
+        if (clientName != null && !clientName.isBlank()) {
+            this.server.addClient(clientName, this);
+            this.server.broadcastMessage("-> " + clientName + " has connected to the chat-server!");
+        }
     }
 
     public void disconnectClient() {
-        this.chatServer.removeClient(this);
-        this.chatServer.broadcastMessage("<- " + clientName + "has disconnected from the chat-server!");
+        this.server.removeClient(this);
+        this.server.broadcastMessage("<- " + clientName + " has disconnected from the chat-server!");
         try {
             this.socket.close();
         } catch (final IOException exception) {
@@ -70,7 +74,7 @@ public class ChatServerThread extends Thread {
         }
     }
 
-    public Socket getSocket() {
-        return this.socket;
+    public String getClientName() {
+        return this.clientName;
     }
 }
