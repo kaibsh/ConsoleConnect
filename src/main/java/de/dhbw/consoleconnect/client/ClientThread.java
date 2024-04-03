@@ -6,14 +6,14 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class ChatClientThread extends Thread {
+public class ClientThread extends Thread {
 
-    private final ChatClient chatClient;
+    private final Client client;
     private final Socket socket;
     private final BufferedReader bufferedReader;
 
-    public ChatClientThread(final ChatClient chatClient, final Socket socket) throws IOException {
-        this.chatClient = chatClient;
+    public ClientThread(final Client client, final Socket socket) throws IOException {
+        this.client = client;
         this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
@@ -43,9 +43,5 @@ public class ChatClientThread extends Thread {
                 exception.printStackTrace();
             }
         }
-    }
-
-    public Socket getSocket() {
-        return this.socket;
     }
 }
