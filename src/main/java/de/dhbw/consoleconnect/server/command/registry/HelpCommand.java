@@ -16,9 +16,9 @@ public class HelpCommand extends Command {
             final StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("[HelpCommand] Available commands:").append("\n");
             for (final Command command : server.getCommandHandler().getCommands()) {
-                stringBuilder.append("[HelpCommand] - ").append(command.getName()).append(" | ").append(command.getDescription()).append("\n");
+                stringBuilder.append("[HelpCommand] - /").append(command.getName()).append(" | ").append(command.getDescription()).append("\n");
             }
-            stringBuilder.setLength(stringBuilder.length() - 2);
+            stringBuilder.setLength(stringBuilder.length() - 1);
             client.sendMessage(stringBuilder.toString());
         } else {
             client.sendMessage("[HelpCommand] This command does not take any arguments.");
