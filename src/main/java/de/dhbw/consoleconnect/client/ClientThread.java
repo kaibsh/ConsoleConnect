@@ -1,7 +1,5 @@
 package de.dhbw.consoleconnect.client;
 
-import de.dhbw.consoleconnect.client.file.FileHelper;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +14,6 @@ public class ClientThread extends Thread {
     private final Socket socket;
     private final BufferedReader bufferedReader;
     private final List<String> messages = new ArrayList<>();
-    private String roomName = "GLOBAL";
 
     public ClientThread(final Client client, final Socket socket) throws IOException {
         this.client = client;
@@ -30,14 +27,7 @@ public class ClientThread extends Thread {
             while (!socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null && !message.isBlank()) {
-                    if (message.equals("[SaveCommand] SAVE")) {
-                        this.displayMessage("[SaveCommand] Successfully saved the chat history.");
-                        this.saveMessages();
-                    } else if (message.startsWith("[RoomManager] ENTER: ")) {
-                        this.roomName = message.replace("[RoomManager] ENTER: ", "");
-                    } else if (message.equals("[RoomManager] LEAVE: GLOBAL")) {
-                        this.roomName = "GLOBAL";
-                    } else {
+                    if (!this.client.getHookManager().handleHook(this, message)) {
                         this.displayMessage(message);
                     }
                 } else {
@@ -60,27 +50,14 @@ public class ClientThread extends Thread {
                 exception.printStackTrace();
             }
         }
-        this.saveMessages();
     }
 
-    private void displayMessage(final String rawMessage) {
+    public void displayMessage(final String rawMessage) {
         if (rawMessage != null && !rawMessage.isBlank()) {
-            final String message = rawMessage.startsWith("[") ? rawMessage : "(" + this.roomName + ") " + rawMessage;
+            final String message = rawMessage.startsWith("[") ? rawMessage : "(" + this.client.getRoomName() + ") " + rawMessage;
             this.messages.add(message);
             System.out.println(message);
         }
-    }
-
-    private void saveMessages() {
-        final StringBuilder stringBuilder = new StringBuilder();
-        for (final String message : this.messages) {
-            stringBuilder.append(message).append("\n");
-        }
-        FileHelper.write("./build/history.txt", stringBuilder.toString());
-    }
-
-    public String getRoomName() {
-        return this.roomName;
     }
 
     public List<String> getMessages() {

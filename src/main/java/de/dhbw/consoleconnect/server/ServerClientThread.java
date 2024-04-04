@@ -34,10 +34,13 @@ public class ServerClientThread extends Thread {
                     if (this.clientName == null && message.startsWith("[HANDSHAKE]")) {
                         final String handshakeClientName = message.substring(12);
                         if (!handshakeClientName.isBlank()) {
-                            this.clientName = handshakeClientName;
-                            if (!this.server.containsClient(this.clientName)) {
-                                this.connectClient(this.clientName);
+                            if (!this.server.containsClient(handshakeClientName)) {
+                                this.clientName = handshakeClientName;
+                                this.connectClient();
                                 System.out.println(message);
+                            } else {
+                                this.sendMessage("[ERROR] The client name is already in use!");
+                                this.socket.close();
                             }
                         }
                     } else {
@@ -50,8 +53,10 @@ public class ServerClientThread extends Thread {
         } catch (final IOException exception) {
             exception.printStackTrace();
         }
-        this.disconnectClient();
-        System.out.println("[INFO] Client disconnected: " + this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort());
+        if (this.clientName != null) {
+            this.disconnectClient();
+            System.out.println("[INFO] Client disconnected: " + this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort());
+        }
     }
 
     public void sendMessage(final String message) {
@@ -60,22 +65,20 @@ public class ServerClientThread extends Thread {
         }
     }
 
-    public void connectClient(final String clientName) {
-        if (clientName != null && !clientName.isBlank()) {
-            this.server.addClient(clientName, this);
-            this.server.broadcastMessage("-> " + clientName + " has connected to the chat-server!");
-        }
+    public void connectClient() {
+        this.server.addClient(this.clientName, this);
+        this.server.broadcastMessage(this, "-> " + this.clientName + " has connected to the chat-server!");
     }
 
     public void disconnectClient() {
         this.server.removeClient(this);
-        this.server.broadcastMessage("<- " + clientName + " has disconnected from the chat-server!");
         if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
             final Room room = this.server.getRoomManager().getRoom(this.roomName);
             if (room != null) {
                 this.server.getRoomManager().leaveRoom(room, this);
             }
         }
+        this.server.broadcastMessage(this, "<- " + this.clientName + " has disconnected from the chat-server!");
         try {
             this.socket.close();
         } catch (final IOException exception) {

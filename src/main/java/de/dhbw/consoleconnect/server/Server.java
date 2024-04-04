@@ -36,12 +36,16 @@ public class Server {
         }
     }
 
-    public void broadcastMessage(final String message) {
+    public void broadcastMessage(final ServerClientThread client, final String message) {
         if (message != null && !message.isBlank()) {
-            for (final ServerClientThread client : this.clients.values()) {
-                if (client.getRoomName().equalsIgnoreCase("GLOBAL")) {
-                    client.sendMessage(message);
+            if (client.getRoomName().equalsIgnoreCase("GLOBAL")) {
+                for (final ServerClientThread receiverClient : this.clients.values()) {
+                    if (client.getRoomName().equalsIgnoreCase(receiverClient.getRoomName())) {
+                        receiverClient.sendMessage(message);
+                    }
                 }
+            } else {
+                this.roomManager.getRoom(client.getRoomName()).broadcastMessage(message);
             }
         }
     }
@@ -52,7 +56,7 @@ public class Server {
             if (trimedMessage.startsWith("/") && trimedMessage.length() > 1) {
                 this.commandManager.handleCommand(client, trimedMessage.substring(1));
             } else {
-                this.broadcastMessage(client.getClientName() + ": " + trimedMessage);
+                this.broadcastMessage(client, client.getClientName() + ": " + trimedMessage);
             }
         }
     }

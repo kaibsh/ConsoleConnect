@@ -3,6 +3,7 @@ package de.dhbw.consoleconnect.server.command;
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
 import de.dhbw.consoleconnect.server.command.registry.HelpCommand;
+import de.dhbw.consoleconnect.server.command.registry.ListCommand;
 import de.dhbw.consoleconnect.server.command.registry.RoomCommand;
 import de.dhbw.consoleconnect.server.command.registry.SaveCommand;
 
@@ -23,6 +24,9 @@ public class CommandManager {
     private void registerCommands() {
         final HelpCommand helpCommand = new HelpCommand();
         this.commands.put(helpCommand.getName(), helpCommand);
+
+        final ListCommand listCommand = new ListCommand();
+        this.commands.put(listCommand.getName(), listCommand);
 
         final RoomCommand roomCommand = new RoomCommand();
         this.commands.put(roomCommand.getName(), roomCommand);
