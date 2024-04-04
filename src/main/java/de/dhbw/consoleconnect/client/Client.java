@@ -1,6 +1,7 @@
 package de.dhbw.consoleconnect.client;
 
 import de.dhbw.consoleconnect.client.file.PropertiesFile;
+import de.dhbw.consoleconnect.client.hook.HookManager;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,11 +11,14 @@ import java.util.Scanner;
 public class Client {
 
     private final PropertiesFile propertiesFile;
+    private final HookManager hookManager;
     private final Scanner scanner;
     private final String clientName;
+    private String roomName = "GLOBAL";
 
     public Client(final boolean ignoreClientConfiguration) {
         this.propertiesFile = new PropertiesFile();
+        this.hookManager = new HookManager(this);
         this.scanner = new Scanner(System.in);
         if (!ignoreClientConfiguration && this.propertiesFile.getProperties().containsKey("client.name")) {
             this.clientName = this.propertiesFile.getProperties().getProperty("client.name");
@@ -22,9 +26,10 @@ public class Client {
             System.out.println("Please enter your name: ");
             System.out.print("> ");
             this.clientName = scanner.nextLine();
-            System.out.print("(GLOBAL) > ");
-            this.propertiesFile.getProperties().put("client.name", this.clientName);
-            this.propertiesFile.save();
+            if (!ignoreClientConfiguration) {
+                this.propertiesFile.getProperties().put("client.name", this.clientName);
+                this.propertiesFile.save();
+            }
         }
     }
 
@@ -54,7 +59,19 @@ public class Client {
         }
     }
 
+    public HookManager getHookManager() {
+        return this.hookManager;
+    }
+
     public String getClientName() {
         return this.clientName;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(final String roomName) {
+        this.roomName = roomName;
     }
 }

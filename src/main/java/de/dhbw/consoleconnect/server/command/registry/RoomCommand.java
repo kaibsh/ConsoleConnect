@@ -8,7 +8,7 @@ import de.dhbw.consoleconnect.server.room.Room;
 public class RoomCommand extends Command {
 
     public RoomCommand() {
-        super("room", "TBD");
+        super("room", "Manages private chat-rooms.");
     }
 
     @Override
