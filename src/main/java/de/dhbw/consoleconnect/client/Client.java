@@ -20,7 +20,9 @@ public class Client {
             this.clientName = this.propertiesFile.getProperties().getProperty("client.name");
         } else {
             System.out.println("Please enter your name: ");
+            System.out.print("> ");
             this.clientName = scanner.nextLine();
+            System.out.print("(GLOBAL) > ");
             this.propertiesFile.getProperties().put("client.name", this.clientName);
             this.propertiesFile.save();
         }
@@ -36,7 +38,7 @@ public class Client {
             final ClientThread clientThread = new ClientThread(this, socket);
             clientThread.start();
 
-            printWriter.println("[HANDSHAKE] <-> " + this.clientName);
+            printWriter.println("[HANDSHAKE] " + this.clientName);
 
             while (clientThread.isAlive()) {
                 final String input = scanner.nextLine();

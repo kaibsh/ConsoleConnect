@@ -16,6 +16,7 @@ public class ClientThread extends Thread {
     private final Socket socket;
     private final BufferedReader bufferedReader;
     private final List<String> messages = new ArrayList<>();
+    private String roomName = "GLOBAL";
 
     public ClientThread(final Client client, final Socket socket) throws IOException {
         this.client = client;
@@ -29,20 +30,26 @@ public class ClientThread extends Thread {
             while (!socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null && !message.isBlank()) {
-                    if (message.equals("[SaveCommand]")) {
+                    if (message.equals("[SaveCommand] SAVE")) {
                         this.displayMessage("[SaveCommand] Successfully saved the chat history.");
                         this.saveMessages();
+                    } else if (message.startsWith("[RoomManager] ENTER: ")) {
+                        this.roomName = message.replace("[RoomManager] ENTER: ", "");
+                    } else if (message.equals("[RoomManager] LEAVE: GLOBAL")) {
+                        this.roomName = "GLOBAL";
                     } else {
                         this.displayMessage(message);
                     }
                 } else {
-                    this.displayMessage("You lost the connection to the chat-server.");
+                    System.out.println("You lost the connection to the chat-server.");
+                    System.out.println("Press ENTER for closing the chat-client...");
                     this.socket.close();
                     break;
                 }
             }
         } catch (final SocketException exception) {
-            this.displayMessage("You lost the connection to the chat-server.");
+            System.out.println("You lost the connection to the chat-server.");
+            System.out.println("Press ENTER for closing the chat-client...");
             exception.printStackTrace();
         } catch (final IOException exception) {
             exception.printStackTrace();
@@ -56,9 +63,12 @@ public class ClientThread extends Thread {
         this.saveMessages();
     }
 
-    private void displayMessage(final String message) {
-        this.messages.add(message);
-        System.out.println(message);
+    private void displayMessage(final String rawMessage) {
+        if (rawMessage != null && !rawMessage.isBlank()) {
+            final String message = rawMessage.startsWith("[") ? rawMessage : "(" + this.roomName + ") " + rawMessage;
+            this.messages.add(message);
+            System.out.println(message);
+        }
     }
 
     private void saveMessages() {
@@ -67,6 +77,10 @@ public class ClientThread extends Thread {
             stringBuilder.append(message).append("\n");
         }
         FileHelper.write("./build/history.txt", stringBuilder.toString());
+    }
+
+    public String getRoomName() {
+        return this.roomName;
     }
 
     public List<String> getMessages() {

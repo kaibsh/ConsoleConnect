@@ -1,6 +1,7 @@
 package de.dhbw.consoleconnect.server;
 
-import de.dhbw.consoleconnect.server.command.CommandHandler;
+import de.dhbw.consoleconnect.server.command.CommandManager;
+import de.dhbw.consoleconnect.server.room.RoomManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,11 +11,13 @@ import java.util.Map;
 
 public class Server {
 
-    private final CommandHandler commandHandler;
+    private final CommandManager commandManager;
+    private final RoomManager roomManager;
     private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
 
     public Server() {
-        this.commandHandler = new CommandHandler(this);
+        this.commandManager = new CommandManager(this);
+        this.roomManager = new RoomManager(this);
     }
 
     public void start() {
@@ -35,8 +38,10 @@ public class Server {
 
     public void broadcastMessage(final String message) {
         if (message != null && !message.isBlank()) {
-            for (final ServerClientThread serverClientThread : this.clients.values()) {
-                serverClientThread.sendMessage(message);
+            for (final ServerClientThread client : this.clients.values()) {
+                if (client.getRoomName().equalsIgnoreCase("GLOBAL")) {
+                    client.sendMessage(message);
+                }
             }
         }
     }
@@ -45,7 +50,7 @@ public class Server {
         if (client != null && message != null && !message.isBlank()) {
             final String trimedMessage = message.trim();
             if (trimedMessage.startsWith("/") && trimedMessage.length() > 1) {
-                this.commandHandler.handleCommand(client, trimedMessage.substring(1));
+                this.commandManager.handleCommand(client, trimedMessage.substring(1));
             } else {
                 this.broadcastMessage(client.getClientName() + ": " + trimedMessage);
             }
@@ -82,7 +87,11 @@ public class Server {
         return false;
     }
 
-    public CommandHandler getCommandHandler() {
-        return this.commandHandler;
+    public CommandManager getCommandHandler() {
+        return this.commandManager;
+    }
+
+    public RoomManager getRoomManager() {
+        return this.roomManager;
     }
 }

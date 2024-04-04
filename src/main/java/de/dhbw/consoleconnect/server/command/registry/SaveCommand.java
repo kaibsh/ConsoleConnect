@@ -13,7 +13,7 @@ public class SaveCommand extends Command {
     @Override
     public void execute(final Server server, final ServerClientThread client, final String[] arguments) {
         if (arguments == null) {
-            client.sendMessage("[SaveCommand]");
+            client.sendMessage("[SaveCommand] SAVE");
         } else {
             client.sendMessage("[SaveCommand] This command does not take any arguments.");
         }

@@ -1,5 +1,7 @@
 package de.dhbw.consoleconnect.server;
 
+import de.dhbw.consoleconnect.server.room.Room;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +15,7 @@ public class ServerClientThread extends Thread {
     private final BufferedReader bufferedReader;
     private final PrintWriter printWriter;
     private String clientName;
+    private String roomName = "GLOBAL";
 
     public ServerClientThread(final Server server, final Socket socket) throws IOException {
         this.server = server;
@@ -28,8 +31,8 @@ public class ServerClientThread extends Thread {
             while (!socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null) {
-                    if (this.clientName == null && message.startsWith("[HANDSHAKE] <->")) {
-                        final String handshakeClientName = message.substring(16);
+                    if (this.clientName == null && message.startsWith("[HANDSHAKE]")) {
+                        final String handshakeClientName = message.substring(12);
                         if (!handshakeClientName.isBlank()) {
                             this.clientName = handshakeClientName;
                             if (!this.server.containsClient(this.clientName)) {
@@ -67,6 +70,12 @@ public class ServerClientThread extends Thread {
     public void disconnectClient() {
         this.server.removeClient(this);
         this.server.broadcastMessage("<- " + clientName + " has disconnected from the chat-server!");
+        if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
+            final Room room = this.server.getRoomManager().getRoom(this.roomName);
+            if (room != null) {
+                this.server.getRoomManager().leaveRoom(room, this);
+            }
+        }
         try {
             this.socket.close();
         } catch (final IOException exception) {
@@ -76,5 +85,15 @@ public class ServerClientThread extends Thread {
 
     public String getClientName() {
         return this.clientName;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(final String roomName) {
+        if (roomName != null && !roomName.isBlank()) {
+            this.roomName = roomName;
+        }
     }
 }
