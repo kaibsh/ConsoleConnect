@@ -8,18 +8,18 @@ public abstract class Command {
     private final String name;
     private final String description;
 
-    public Command(final String name, final String description) {
+    protected Command(final String name, final String description) {
         this.name = name;
         this.description = description;
     }
 
-    public abstract void execute(final Server server, final ServerClientThread client, final String[] arguments);
+    protected abstract void execute(final Server server, final ServerClientThread client, final String[] arguments);
 
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
-    public String getDescription() {
-        return description;
+    public final String getDescription() {
+        return this.description;
     }
 }

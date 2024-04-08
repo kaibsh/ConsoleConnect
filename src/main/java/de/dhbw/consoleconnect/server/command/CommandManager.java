@@ -2,10 +2,7 @@ package de.dhbw.consoleconnect.server.command;
 
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
-import de.dhbw.consoleconnect.server.command.registry.HelpCommand;
-import de.dhbw.consoleconnect.server.command.registry.ListCommand;
-import de.dhbw.consoleconnect.server.command.registry.RoomCommand;
-import de.dhbw.consoleconnect.server.command.registry.SaveCommand;
+import de.dhbw.consoleconnect.server.command.registry.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,6 +19,9 @@ public class CommandManager {
     }
 
     private void registerCommands() {
+        final GameCommand gameCommand = new GameCommand();
+        this.commands.put(gameCommand.getName(), gameCommand);
+
         final HelpCommand helpCommand = new HelpCommand();
         this.commands.put(helpCommand.getName(), helpCommand);
 
@@ -39,7 +39,7 @@ public class CommandManager {
         final String[] splittedCommand = commandLine.split(" ");
 
         final String commandName = splittedCommand[0];
-        final Command command = commands.get(commandName);
+        final Command command = this.commands.get(commandName);
 
         if (command != null) {
             String[] commandArguments = null;

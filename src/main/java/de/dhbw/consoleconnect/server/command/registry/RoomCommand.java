@@ -12,31 +12,41 @@ public class RoomCommand extends Command {
     }
 
     @Override
-    public void execute(Server server, ServerClientThread client, String[] arguments) {
+    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
         if (arguments == null) {
             client.sendMessage("[RoomCommand] Use '/room help' for more information.");
         } else if (arguments.length == 1) {
             if (arguments[0].equalsIgnoreCase("help")) {
                 client.sendMessage("[RoomCommand] Help:");
-                client.sendMessage("[RoomCommand] - /room create <roomName> | Creates a new room with the given name.");
-                client.sendMessage("[RoomCommand] - /room join <roomName> | Joins the room with the given name.");
-                client.sendMessage("[RoomCommand] - /room remove | Removes the current room.");
-                client.sendMessage("[RoomCommand] - /room leave | Leaves the current room.");
-                client.sendMessage("[RoomCommand] - /room list | Lists all available rooms.");
+                client.sendMessage("[RoomCommand] - '/room create <roomName>' | Creates a new room with the given name.");
+                client.sendMessage("[RoomCommand] - '/room join <roomName>' | Joins the room with the given name.");
+                client.sendMessage("[RoomCommand] - '/room remove' | Removes the current room.");
+                client.sendMessage("[RoomCommand] - '/room leave' | Leaves the current room.");
+                client.sendMessage("[RoomCommand] - '/room list' | Lists all available rooms.");
             } else if (arguments[0].equalsIgnoreCase("create")) {
                 client.sendMessage("[RoomCommand] Usage: /room create <roomName>");
             } else if (arguments[0].equalsIgnoreCase("join")) {
                 client.sendMessage("[RoomCommand] Usage: /room join <roomName>");
             } else if (arguments[0].equalsIgnoreCase("remove")) {
                 if (!client.getRoomName().equalsIgnoreCase("GLOBAL")) {
-                    server.getRoomManager().removeRoom(server.getRoomManager().getRoom(client.getRoomName()));
+                    final Room room = server.getRoomManager().getRoom(client.getRoomName());
+                    if (room != null) {
+                        server.getRoomManager().removeRoom(room);
+                    } else {
+                        client.sendMessage("[RoomCommand] An error occurred while removing the room!");
+                    }
                 } else {
                     client.sendMessage("[RoomCommand] You are already in the global chat-room!");
                 }
             } else if (arguments[0].equalsIgnoreCase("leave")) {
                 if (!client.getRoomName().equalsIgnoreCase("GLOBAL")) {
-                    server.getRoomManager().leaveRoom(server.getRoomManager().getRoom(client.getRoomName()), client);
-                    client.sendMessage("[RoomCommand] You have been moved to the global chat-room.");
+                    final Room room = server.getRoomManager().getRoom(client.getRoomName());
+                    if (room != null) {
+                        server.getRoomManager().leaveRoom(room, client);
+                        client.sendMessage("[RoomCommand] You have been moved to the global chat-room.");
+                    } else {
+                        client.sendMessage("[RoomCommand] An error occurred while leaving the room!");
+                    }
                 } else {
                     client.sendMessage("[RoomCommand] You are already in the global chat-room!");
                 }
@@ -73,7 +83,7 @@ public class RoomCommand extends Command {
                         client.sendMessage("[RoomCommand] You cannot create a room with the name 'GLOBAL'!");
                     }
                 } else {
-                    client.sendMessage("[RoomCommand] Usage: /room create <roomName>");
+                    client.sendMessage("[RoomCommand] Usage: '/room create <roomName>'");
                 }
             } else if (arguments[0].equalsIgnoreCase("join")) {
                 final String roomName = arguments[1].trim();
@@ -81,14 +91,28 @@ public class RoomCommand extends Command {
                     if (!roomName.equalsIgnoreCase(client.getRoomName())) {
                         if (!roomName.equalsIgnoreCase("GLOBAL")) {
                             if (server.getRoomManager().isRoomExistent(roomName)) {
-                                server.getRoomManager().joinRoom(server.getRoomManager().getRoom(roomName), client);
-                                client.sendMessage("[RoomCommand] You have been moved to the private chat-room.");
+                                final Room room = server.getRoomManager().getRoom(roomName);
+                                if (room != null) {
+                                    if (!room.isGame()) {
+                                        server.getRoomManager().joinRoom(room, client);
+                                        client.sendMessage("[RoomCommand] You have been moved to the private chat-room.");
+                                    } else {
+                                        client.sendMessage("[RoomCommand] You cannot join a game chat-room!");
+                                    }
+                                } else {
+                                    client.sendMessage("[RoomCommand] An error occurred while joining the room!");
+                                }
                             } else {
                                 client.sendMessage("[RoomCommand] The room '" + roomName + "' does not exist!");
                             }
                         } else {
-                            server.getRoomManager().leaveRoom(server.getRoomManager().getRoom(client.getRoomName()), client);
-                            client.sendMessage("[RoomManager] You have been moved to the global chat-room.");
+                            final Room room = server.getRoomManager().getRoom(client.getRoomName());
+                            if (room != null) {
+                                server.getRoomManager().leaveRoom(room, client);
+                                client.sendMessage("[RoomManager] You have been moved to the global chat-room.");
+                            } else {
+                                client.sendMessage("[RoomCommand] An error occurred while joining the room!");
+                            }
                         }
                     } else {
                         if (!roomName.equalsIgnoreCase("GLOBAL")) {
@@ -98,7 +122,7 @@ public class RoomCommand extends Command {
                         }
                     }
                 } else {
-                    client.sendMessage("[RoomCommand] Usage: /room join <roomName>");
+                    client.sendMessage("[RoomCommand] Usage: '/room join <roomName>'");
                 }
             } else {
                 client.sendMessage("[RoomCommand] Use '/room help' for more information.");

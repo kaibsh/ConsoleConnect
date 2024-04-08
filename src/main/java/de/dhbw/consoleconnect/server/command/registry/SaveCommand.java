@@ -11,7 +11,7 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public void execute(final Server server, final ServerClientThread client, final String[] arguments) {
+    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
         if (arguments == null) {
             client.sendMessage("[HOOK] SAVE");
         } else {

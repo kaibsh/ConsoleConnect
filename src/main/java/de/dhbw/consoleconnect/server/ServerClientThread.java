@@ -1,5 +1,6 @@
 package de.dhbw.consoleconnect.server;
 
+import de.dhbw.consoleconnect.server.game.Game;
 import de.dhbw.consoleconnect.server.room.Room;
 
 import java.io.BufferedReader;
@@ -28,7 +29,7 @@ public class ServerClientThread extends Thread {
     public void run() {
         System.out.println("[INFO] Client connected: " + this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort());
         try {
-            while (!socket.isClosed()) {
+            while (!this.socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null) {
                     if (this.clientName == null && message.startsWith("[HANDSHAKE]")) {
@@ -44,7 +45,7 @@ public class ServerClientThread extends Thread {
                             }
                         }
                     } else {
-                        this.server.handleMessage(this, message);
+                        this.handleMessage(message);
                     }
                 } else {
                     break;
@@ -56,6 +57,29 @@ public class ServerClientThread extends Thread {
         if (this.clientName != null) {
             this.disconnectClient();
             System.out.println("[INFO] Client disconnected: " + this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort());
+        }
+    }
+
+    private void handleMessage(final String message) {
+        if (message != null && !message.isBlank()) {
+            final String trimedMessage = message.trim();
+            if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
+                final Room room = this.server.getRoomManager().getRoom(this.roomName);
+                if (room != null) {
+                    if (room.isGame()) {
+                        final Game game = this.server.getGameManager().getGame(this);
+                        if (game != null) {
+                            this.server.getGameManager().handleGameInput(game, this, trimedMessage);
+                            return;
+                        }
+                    }
+                }
+            }
+            if (trimedMessage.startsWith("/") && trimedMessage.length() > 1) {
+                this.server.getCommandHandler().handleCommand(this, trimedMessage.substring(1));
+            } else {
+                this.server.broadcastMessage(this, this.clientName + ": " + trimedMessage);
+            }
         }
     }
 
@@ -72,6 +96,7 @@ public class ServerClientThread extends Thread {
 
     public void disconnectClient() {
         this.server.removeClient(this);
+        this.server.getGameManager().removeAllGameRequests(this);
         if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
             final Room room = this.server.getRoomManager().getRoom(this.roomName);
             if (room != null) {
@@ -91,7 +116,7 @@ public class ServerClientThread extends Thread {
     }
 
     public String getRoomName() {
-        return roomName;
+        return this.roomName;
     }
 
     public void setRoomName(final String roomName) {

@@ -24,7 +24,7 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
-            while (!socket.isClosed()) {
+            while (!this.socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null && !message.isBlank()) {
                     if (!this.client.getHookManager().handleHook(this, message)) {
@@ -40,7 +40,6 @@ public class ClientThread extends Thread {
         } catch (final SocketException exception) {
             System.out.println("You lost the connection to the chat-server.");
             System.out.println("Press ENTER for closing the chat-client...");
-            exception.printStackTrace();
         } catch (final IOException exception) {
             exception.printStackTrace();
         } finally {
