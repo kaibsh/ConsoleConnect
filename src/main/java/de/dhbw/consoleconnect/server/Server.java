@@ -1,22 +1,27 @@
 package de.dhbw.consoleconnect.server;
 
 import de.dhbw.consoleconnect.server.command.CommandManager;
+import de.dhbw.consoleconnect.server.game.GameManager;
+import de.dhbw.consoleconnect.server.room.Room;
 import de.dhbw.consoleconnect.server.room.RoomManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Server {
 
     private final CommandManager commandManager;
+    private final GameManager gameManager;
     private final RoomManager roomManager;
     private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
 
     public Server() {
         this.commandManager = new CommandManager(this);
+        this.gameManager = new GameManager(this);
         this.roomManager = new RoomManager(this);
     }
 
@@ -24,7 +29,6 @@ public class Server {
         try (final ServerSocket serverSocket = new ServerSocket(1234)) {
             System.out.println("[INFO] Successfully started chat-server!");
             System.out.println("[INFO] The server is listening on port: '" + serverSocket.getLocalPort() + "'");
-
             while (true) {
                 final Socket socket = serverSocket.accept();
 
@@ -45,18 +49,10 @@ public class Server {
                     }
                 }
             } else {
-                this.roomManager.getRoom(client.getRoomName()).broadcastMessage(message);
-            }
-        }
-    }
-
-    public void handleMessage(final ServerClientThread client, final String message) {
-        if (client != null && message != null && !message.isBlank()) {
-            final String trimedMessage = message.trim();
-            if (trimedMessage.startsWith("/") && trimedMessage.length() > 1) {
-                this.commandManager.handleCommand(client, trimedMessage.substring(1));
-            } else {
-                this.broadcastMessage(client, client.getClientName() + ": " + trimedMessage);
+                final Room room = this.roomManager.getRoom(client.getRoomName());
+                if (room != null) {
+                    room.broadcastMessage(message, false);
+                }
             }
         }
     }
@@ -86,7 +82,11 @@ public class Server {
 
     public boolean containsClient(final String clientName) {
         if (clientName != null && !clientName.isBlank()) {
-            return this.clients.containsKey(clientName);
+            for (final String key : this.clients.keySet()) {
+                if (key.equalsIgnoreCase(clientName)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -95,7 +95,15 @@ public class Server {
         return this.commandManager;
     }
 
+    public GameManager getGameManager() {
+        return this.gameManager;
+    }
+
     public RoomManager getRoomManager() {
         return this.roomManager;
+    }
+
+    public List<ServerClientThread> getClients() {
+        return List.copyOf(this.clients.values());
     }
 }

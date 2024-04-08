@@ -2,6 +2,7 @@ package de.dhbw.consoleconnect.client.hook;
 
 import de.dhbw.consoleconnect.client.Client;
 import de.dhbw.consoleconnect.client.ClientThread;
+import de.dhbw.consoleconnect.client.hook.registry.GameHook;
 import de.dhbw.consoleconnect.client.hook.registry.RoomHook;
 import de.dhbw.consoleconnect.client.hook.registry.SaveHook;
 
@@ -19,6 +20,7 @@ public class HookManager {
     }
 
     private void registerHooks() {
+        this.hooks.add(new GameHook());
         this.hooks.add(new RoomHook());
         this.hooks.add(new SaveHook());
     }

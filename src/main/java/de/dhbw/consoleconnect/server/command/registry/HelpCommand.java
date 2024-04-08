@@ -11,12 +11,14 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(final Server server, final ServerClientThread client, final String[] arguments) {
+    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
         if (arguments == null) {
             final StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("[HelpCommand] Available commands:").append("\n");
             for (final Command command : server.getCommandHandler().getCommands()) {
-                stringBuilder.append("[HelpCommand] - /").append(command.getName()).append(" | ").append(command.getDescription()).append("\n");
+                if (!(command instanceof HelpCommand)) {
+                    stringBuilder.append("[HelpCommand] - '/").append(command.getName()).append("' | ").append(command.getDescription()).append("\n");
+                }
             }
             stringBuilder.setLength(stringBuilder.length() - 1);
             client.sendMessage(stringBuilder.toString());

@@ -25,7 +25,7 @@ public class Client {
         } else {
             System.out.println("Please enter your name: ");
             System.out.print("> ");
-            this.clientName = scanner.nextLine();
+            this.clientName = this.scanner.nextLine();
             if (!ignoreClientConfiguration) {
                 this.propertiesFile.getProperties().put("client.name", this.clientName);
                 this.propertiesFile.save();
@@ -37,16 +37,12 @@ public class Client {
         try (final Socket socket = new Socket("127.0.0.1", 1234)) {
             System.out.println("[INFO] Successfully started chat-client!");
             System.out.println("[INFO] The client is connected to server: '" + socket.getLocalAddress().getHostAddress() + ":" + socket.getPort() + "'");
-
             final PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
-
             final ClientThread clientThread = new ClientThread(this, socket);
             clientThread.start();
-
             printWriter.println("[HANDSHAKE] " + this.clientName);
-
             while (clientThread.isAlive()) {
-                final String input = scanner.nextLine();
+                final String input = this.scanner.nextLine();
                 if (input != null && !input.isBlank()) {
                     if (input.startsWith("/")) {
                         clientThread.getMessages().add(input);
@@ -68,7 +64,7 @@ public class Client {
     }
 
     public String getRoomName() {
-        return roomName;
+        return this.roomName;
     }
 
     public void setRoomName(final String roomName) {
