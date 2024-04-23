@@ -40,7 +40,7 @@ public class GameCommand extends Command {
                 final List<GameRequest> receivedGameRequests = server.getGameManager().getReceivedGameRequests(client);
                 if (!sendedGameRequests.isEmpty() || !receivedGameRequests.isEmpty()) {
                     if (!sendedGameRequests.isEmpty()) {
-                        client.sendMessage("[GameCommand] Sended game requests:");
+                        client.sendMessage("[GameCommand] Sent game requests:");
                         for (final GameRequest gameRequest : sendedGameRequests) {
                             client.sendMessage("[GameCommand] • -> " + gameRequest.getReceiver().getClientName() + " (" + gameRequest.getGameMode().getName() + ")");
                         }
@@ -129,12 +129,12 @@ public class GameCommand extends Command {
                     if (type.equalsIgnoreCase("SENDED")) {
                         final List<GameRequest> sendedGameRequests = server.getGameManager().getSendedGameRequests(client);
                         if (!sendedGameRequests.isEmpty()) {
-                            client.sendMessage("[GameCommand] Sended game requests:");
+                            client.sendMessage("[GameCommand] Sent game requests:");
                             for (final GameRequest gameRequest : sendedGameRequests) {
                                 client.sendMessage("[GameCommand] • -> " + gameRequest.getReceiver().getClientName() + " (" + gameRequest.getGameMode().getName() + ")");
                             }
                         } else {
-                            client.sendMessage("[GameCommand] No sended game requests found!");
+                            client.sendMessage("[GameCommand] No sent game requests found!");
                         }
                     } else if (type.equalsIgnoreCase("RECEIVED")) {
                         final List<GameRequest> receivedGameRequests = server.getGameManager().getReceivedGameRequests(client);
@@ -204,15 +204,17 @@ public class GameCommand extends Command {
     }
 
     private GameMode resolveGameMode(final String rawGameMode) {
-        try {
-            final int gameModeIndex = Integer.parseInt(rawGameMode);
-            if (gameModeIndex >= 1 && gameModeIndex <= GameMode.values().length) {
-                return this.gameModes.get(gameModeIndex);
-            }
-        } catch (final NumberFormatException exception) {
-            for (final GameMode gameMode : GameMode.values()) {
-                if (gameMode.getName().equalsIgnoreCase(rawGameMode)) {
-                    return gameMode;
+        if (rawGameMode != null && !rawGameMode.isBlank()) {
+            try {
+                final int gameModeIndex = Integer.parseInt(rawGameMode);
+                if (gameModeIndex >= 1 && gameModeIndex <= GameMode.values().length) {
+                    return this.gameModes.get(gameModeIndex);
+                }
+            } catch (final NumberFormatException exception) {
+                for (final GameMode gameMode : GameMode.values()) {
+                    if (gameMode.getName().equalsIgnoreCase(rawGameMode)) {
+                        return gameMode;
+                    }
                 }
             }
         }

@@ -95,15 +95,16 @@ public class ServerClientThread extends Thread {
     }
 
     public void disconnectClient() {
-        this.server.removeClient(this);
+        this.server.broadcastMessage(this, "<- " + this.clientName + " has disconnected from the chat-server!");
         this.server.getGameManager().removeAllGameRequests(this);
         if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
             final Room room = this.server.getRoomManager().getRoom(this.roomName);
             if (room != null) {
-                this.server.getRoomManager().leaveRoom(room, this);
+                this.server.getRoomManager().leaveRoom(room, false, this);
+
             }
         }
-        this.server.broadcastMessage(this, "<- " + this.clientName + " has disconnected from the chat-server!");
+        this.server.removeClient(this);
         try {
             this.socket.close();
         } catch (final IOException exception) {

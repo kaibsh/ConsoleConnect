@@ -4,11 +4,18 @@ import de.dhbw.consoleconnect.client.Client;
 import de.dhbw.consoleconnect.server.Server;
 
 public class ConsoleConnect {
-    private final static String COMPONENT = System.getenv("COMPONENT");
-    private final static boolean IGNORE_CLIENT_CONFIGURATION = Boolean.valueOf(System.getenv("IGNORE_CLIENT_CONFIGURATION"));
+    private static String COMPONENT = System.getenv("COMPONENT");
+    private static boolean IGNORE_CLIENT_CONFIGURATION = Boolean.valueOf(System.getenv("IGNORE_CLIENT_CONFIGURATION"));
 
     public static void main(final String[] arguments) {
         System.out.println("[INFO] Starting ConsoleConnect application...");
+        for (final String argument : arguments) {
+            if (argument.startsWith("--component=")) {
+                COMPONENT = argument.replace("--component=", "");
+            } else if (argument.startsWith("--ignore-client-configuration=")) {
+                IGNORE_CLIENT_CONFIGURATION = Boolean.valueOf(argument.replace("--ignore-client-configuration=", ""));
+            }
+        }
         if (COMPONENT != null && !COMPONENT.isEmpty()) {
             if (COMPONENT.equalsIgnoreCase("server")) {
                 System.out.println("[INFO] Found ConsoleConnect component: 'server'");

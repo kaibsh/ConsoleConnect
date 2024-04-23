@@ -18,8 +18,9 @@ public abstract class Game {
 
     protected final void start() {
         if (!this.running) {
-            this.running = true;
+            this.clear();
             this.handleStart();
+            this.running = true;
         }
     }
 
@@ -27,6 +28,26 @@ public abstract class Game {
         if (this.running) {
             this.running = false;
             this.handleStop();
+        }
+    }
+
+    protected final void broadcast(final String message, final ServerClientThread... clients) {
+        if (message != null && !message.isBlank()) {
+            if (clients != null && clients.length > 0) {
+                for (final ServerClientThread client : clients) {
+                    client.sendMessage(message);
+                }
+            } else {
+                for (final ServerClientThread client : this.getRoom().getClients()) {
+                    client.sendMessage(message);
+                }
+            }
+        }
+    }
+
+    protected final void clear(final ServerClientThread... clients) {
+        if (clients != null) {
+            this.broadcast("[HOOK] CLEAR", clients);
         }
     }
 
