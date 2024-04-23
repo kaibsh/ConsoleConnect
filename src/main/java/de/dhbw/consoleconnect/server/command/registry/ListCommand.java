@@ -14,21 +14,26 @@ public class ListCommand extends Command {
     @Override
     protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
         if (arguments == null) {
-            for (final ServerClientThread targetClient : server.getClients()) {
-                if (targetClient.getRoomName().equalsIgnoreCase("GLOBAL")) {
-                    client.sendMessage("[ListCommand] - " + targetClient.getClientName());
-                } else {
-                    final Room room = server.getRoomManager().getRoom(targetClient.getRoomName());
-                    if (room != null) {
-                        if (!room.isGame()) {
-                            client.sendMessage("[ListCommand] - " + targetClient.getClientName() + " @" + room.getName() + " (" + room.getClients().size() + ")");
-                        } else {
-                            client.sendMessage("[ListCommand] - " + targetClient.getClientName() + " | IN-GAME");
-                        }
-                    } else {
+            if (server.getClients().size() - 1 > 0) {
+                client.sendMessage("[ListCommand] Connected clients:");
+                for (final ServerClientThread targetClient : server.getClients()) {
+                    if (targetClient.getRoomName().equalsIgnoreCase("GLOBAL")) {
                         client.sendMessage("[ListCommand] - " + targetClient.getClientName());
+                    } else {
+                        final Room room = server.getRoomManager().getRoom(targetClient.getRoomName());
+                        if (room != null) {
+                            if (!room.isGame()) {
+                                client.sendMessage("[ListCommand] - " + targetClient.getClientName() + " @" + room.getName() + " (" + room.getClients().size() + ")");
+                            } else {
+                                client.sendMessage("[ListCommand] - " + targetClient.getClientName() + " | IN-GAME");
+                            }
+                        } else {
+                            client.sendMessage("[ListCommand] - " + targetClient.getClientName());
+                        }
                     }
                 }
+            } else {
+                client.sendMessage("[ListCommand] No other clients are connected.");
             }
         } else {
             client.sendMessage("[ListCommand] This command does not take any arguments.");

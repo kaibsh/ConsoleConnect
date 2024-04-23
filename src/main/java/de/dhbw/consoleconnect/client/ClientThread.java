@@ -51,6 +51,21 @@ public class ClientThread extends Thread {
         }
     }
 
+    public void clearMessages() {
+        this.displayMessage("[INFO] Clearing the console...");
+/*      try {
+            final String osName = System.getProperty("os.name");
+            if (osName.contains("Windows")) {
+                Runtime.getRuntime().exec("cls");
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+            this.messages.clear();
+        } catch (final IOException exception) {
+            System.out.println("Error while clearing the console.");
+        }*/
+    }
+
     public void displayMessage(final String rawMessage) {
         if (rawMessage != null && !rawMessage.isBlank()) {
             final String message = rawMessage.startsWith("[") ? rawMessage : "(" + this.client.getRoomName() + ") " + rawMessage;

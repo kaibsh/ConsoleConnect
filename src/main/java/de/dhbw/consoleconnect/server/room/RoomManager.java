@@ -17,30 +17,43 @@ public class RoomManager {
         this.server = server;
     }
 
-    public void joinRoom(final Room room, final ServerClientThread client) {
+    public void joinRoom(final Room room, final boolean silent, final ServerClientThread client) {
         if (room != null && client != null && this.rooms.contains(room) && !client.getRoomName().equals(room.getName())) {
-            final Room currentRoom = this.getRoom(client.getRoomName());
-            if (currentRoom != null) {
-                this.leaveRoom(currentRoom, client);
+            if (!room.getClients().contains(client)) {
+                final Room currentRoom = this.getRoom(client.getRoomName());
+                if (currentRoom != null) {
+                    this.leaveRoom(currentRoom, false, client);
+                }
+                room.addClient(client);
+                if (!silent) {
+                    room.broadcastMessage("-> " + client.getClientName() + " has entered the chat-room!", true);
+                }
+                System.out.println("[ROOM] Client '" + client.getClientName() + "' has joined the room '" + room.getName() + "'.");
             }
-            room.addClient(client);
-            room.broadcastMessage("-> " + client.getClientName() + " has entered the chat-room!", true);
-            System.out.println("[ROOM] Client '" + client.getClientName() + "' has joined the room '" + room.getName() + "'.");
         }
     }
 
-    public void leaveRoom(final Room room, final ServerClientThread client) {
+    public void leaveRoom(final Room room, final boolean silent, final ServerClientThread client) {
         if (room != null && client != null && this.rooms.contains(room) && client.getRoomName().equals(room.getName())) {
-            System.out.println("[ROOM] Client '" + client.getClientName() + "' has left the room '" + room.getName() + "'.");
-            room.broadcastMessage("<- " + client.getClientName() + " has left the chat-room!", true);
-            room.removeClient(client);
-            if (room.isGame()) {
-                final Game game = this.server.getGameManager().getGame(client);
-                if (game != null) {
-                    this.server.getGameManager().stopGame(game);
+            if (room.getClients().contains(client)) {
+                if (room.isGame()) {
+                    final Game game = this.server.getGameManager().getGame(client);
+                    if (game != null && game.isRunning()) {
+                        if (!silent) {
+                            room.broadcastMessage("<- " + client.getClientName() + " has left the chat-room!", true);
+                        }
+                        this.server.getGameManager().stopGame(game);
+                        return;
+                    }
                 }
-            } else if (room.isEmtpy()) {
-                this.removeRoom(room);
+                System.out.println("[ROOM] Client '" + client.getClientName() + "' has left the room '" + room.getName() + "'.");
+                if (!silent) {
+                    room.broadcastMessage("<- " + client.getClientName() + " has left the chat-room!", true);
+                }
+                room.removeClient(client);
+                if (room.isEmtpy() && !room.isGame()) {
+                    this.removeRoom(room);
+                }
             }
         }
     }
@@ -51,7 +64,7 @@ public class RoomManager {
             for (final ServerClientThread client : clients) {
                 final Room currentRoom = this.getRoom(client.getRoomName());
                 if (currentRoom != null) {
-                    this.leaveRoom(currentRoom, client);
+                    this.leaveRoom(currentRoom, false, client);
                 }
                 room.addClient(client);
             }
@@ -62,14 +75,13 @@ public class RoomManager {
 
     public void removeRoom(final Room room) {
         if (room != null && this.rooms.contains(room)) {
-            this.rooms.remove(room);
             if (!room.isEmtpy()) {
                 room.broadcastMessage("[RoomManager] The room has been removed! You have been moved to the global chat-room.", true);
                 for (final ServerClientThread client : room.getClients()) {
-                    room.removeClient(client);
-                    System.out.println("[ROOM] Client '" + client.getClientName() + "' has left the room '" + room.getName() + "'.");
+                    this.leaveRoom(room, true, client);
                 }
             }
+            this.rooms.remove(room);
             System.out.println("[ROOM] Room '" + room.getName() + "' has been removed.");
         }
     }
@@ -94,6 +106,16 @@ public class RoomManager {
             }
         }
         return null;
+    }
+
+    public int calculateGameRooms() {
+        int gameRooms = 0;
+        for (final Room room : this.rooms) {
+            if (room.isGame()) {
+                gameRooms++;
+            }
+        }
+        return gameRooms;
     }
 
     public List<Room> getRooms() {

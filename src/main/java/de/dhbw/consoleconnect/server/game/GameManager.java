@@ -70,7 +70,7 @@ public class GameManager {
                 if (!silent) {
                     senderClient.sendMessage("[GameManager] Successfully canceled the game request to '" + receiverClient.getClientName() + "'!");
                 }
-                receiverClient.sendMessage("[GameManager] The game request from '" + receiverClient.getClientName() + "' has been canceled!");
+                receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getClientName() + "' has been canceled!");
                 System.out.println("[GAME] Request from '" + senderClient.getClientName() + "' to '" + receiverClient.getClientName() + "' has been canceled.");
             }
         }
@@ -120,20 +120,20 @@ public class GameManager {
             if (game.isRunning()) {
                 if (!input.equalsIgnoreCase("exit") && !input.equalsIgnoreCase("leave") && !input.equalsIgnoreCase("stop")) {
                     game.handleInput(client, input);
-                    return;
+                } else {
+                    this.server.getRoomManager().leaveRoom(game.getRoom(), false, client);
                 }
+            } else {
+                System.out.println("DEBUG: Game is not running!");
+                this.stopGame(game);
             }
-            this.stopGame(game);
         }
     }
 
     public Game getGame(final ServerClientThread client) {
         for (final Game game : this.games) {
             if (game.getRoom().getClients().contains(client)) {
-                if (game.isRunning()) {
-                    return game;
-                }
-                this.stopGame(game);
+                return game;
             }
         }
         return null;

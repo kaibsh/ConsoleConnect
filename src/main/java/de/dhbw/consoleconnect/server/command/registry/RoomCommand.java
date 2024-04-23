@@ -42,7 +42,7 @@ public class RoomCommand extends Command {
                 if (!client.getRoomName().equalsIgnoreCase("GLOBAL")) {
                     final Room room = server.getRoomManager().getRoom(client.getRoomName());
                     if (room != null) {
-                        server.getRoomManager().leaveRoom(room, client);
+                        server.getRoomManager().leaveRoom(room, false, client);
                         client.sendMessage("[RoomCommand] You have been moved to the global chat-room.");
                     } else {
                         client.sendMessage("[RoomCommand] An error occurred while leaving the room!");
@@ -51,7 +51,7 @@ public class RoomCommand extends Command {
                     client.sendMessage("[RoomCommand] You are already in the global chat-room!");
                 }
             } else if (arguments[0].equalsIgnoreCase("list")) {
-                if (!server.getRoomManager().getRooms().isEmpty()) {
+                if (!server.getRoomManager().getRooms().isEmpty() && server.getRoomManager().calculateGameRooms() > 1) {
                     client.sendMessage("[RoomCommand] Available rooms:");
                     for (final Room room : server.getRoomManager().getRooms()) {
                         if (!room.isGame()) {
@@ -94,7 +94,7 @@ public class RoomCommand extends Command {
                                 final Room room = server.getRoomManager().getRoom(roomName);
                                 if (room != null) {
                                     if (!room.isGame()) {
-                                        server.getRoomManager().joinRoom(room, client);
+                                        server.getRoomManager().joinRoom(room, false, client);
                                         client.sendMessage("[RoomCommand] You have been moved to the private chat-room.");
                                     } else {
                                         client.sendMessage("[RoomCommand] You cannot join a game chat-room!");
@@ -108,7 +108,7 @@ public class RoomCommand extends Command {
                         } else {
                             final Room room = server.getRoomManager().getRoom(client.getRoomName());
                             if (room != null) {
-                                server.getRoomManager().leaveRoom(room, client);
+                                server.getRoomManager().leaveRoom(room, false, client);
                                 client.sendMessage("[RoomManager] You have been moved to the global chat-room.");
                             } else {
                                 client.sendMessage("[RoomCommand] An error occurred while joining the room!");
