@@ -51,16 +51,16 @@ public class RoomCommand extends Command {
                     client.sendMessage("[RoomCommand] You are already in the global chat-room!");
                 }
             } else if (arguments[0].equalsIgnoreCase("list")) {
-                if (!server.getRoomManager().getRooms().isEmpty() && server.getRoomManager().calculateGameRooms() > 1) {
+                if (!server.getRoomManager().getRooms().isEmpty() && server.getRoomManager().calculateBasicRooms() > 0) {
                     client.sendMessage("[RoomCommand] Available rooms:");
                     for (final Room room : server.getRoomManager().getRooms()) {
                         if (!room.isGame()) {
                             final StringBuilder stringBuilder = new StringBuilder();
                             for (final ServerClientThread clients : room.getClients()) {
-                                stringBuilder.append(clients.getClientName()).append(", ");
+                                stringBuilder.append(clients.getName()).append(", ");
                             }
                             stringBuilder.setLength(stringBuilder.length() - 2);
-                            client.sendMessage("[RoomCommand] - " + room.getName() + " (" + room.getClients().size() + "): " + stringBuilder);
+                            client.sendMessage("[RoomCommand] - " + room.getName().replace("ROOM-", "") + " (" + room.getClients().size() + "): " + stringBuilder);
                         }
                     }
                 } else {
@@ -71,7 +71,7 @@ public class RoomCommand extends Command {
             }
         } else if (arguments.length == 2) {
             if (arguments[0].equalsIgnoreCase("create")) {
-                final String roomName = arguments[1].trim();
+                final String roomName = arguments[1];
                 if (!roomName.isBlank()) {
                     if (!roomName.equalsIgnoreCase("GLOBAL")) {
                         if (!server.getRoomManager().isRoomExistent(roomName)) {
@@ -86,8 +86,9 @@ public class RoomCommand extends Command {
                     client.sendMessage("[RoomCommand] Usage: '/room create <roomName>'");
                 }
             } else if (arguments[0].equalsIgnoreCase("join")) {
-                final String roomName = arguments[1].trim();
-                if (!roomName.isBlank()) {
+                final String rawRoomName = arguments[1];
+                if (!rawRoomName.isBlank()) {
+                    final String roomName = "ROOM-" + rawRoomName;
                     if (!roomName.equalsIgnoreCase(client.getRoomName())) {
                         if (!roomName.equalsIgnoreCase("GLOBAL")) {
                             if (server.getRoomManager().isRoomExistent(roomName)) {

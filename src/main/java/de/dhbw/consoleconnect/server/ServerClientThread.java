@@ -15,7 +15,8 @@ public class ServerClientThread extends Thread {
     private final Socket socket;
     private final BufferedReader bufferedReader;
     private final PrintWriter printWriter;
-    private String clientName;
+    private boolean connected = false;
+    private boolean authenticated = false;
     private String roomName = "GLOBAL";
 
     public ServerClientThread(final Server server, final Socket socket) throws IOException {
@@ -32,13 +33,12 @@ public class ServerClientThread extends Thread {
             while (!this.socket.isClosed()) {
                 final String message = this.bufferedReader.readLine();
                 if (message != null) {
-                    if (this.clientName == null && message.startsWith("[HANDSHAKE]")) {
+                    if (!this.connected && message.startsWith("[HANDSHAKE]")) {
                         final String handshakeClientName = message.substring(12);
                         if (!handshakeClientName.isBlank()) {
                             if (!this.server.containsClient(handshakeClientName)) {
-                                this.clientName = handshakeClientName;
-                                this.connectClient();
-                                System.out.println(message);
+                                this.setName(handshakeClientName);
+                                System.out.println("[INFO] Client '" + this.getName() + "' has been handshake!");
                             } else {
                                 this.sendMessage("[ERROR] The client name is already in use!");
                                 this.socket.close();
@@ -54,31 +54,41 @@ public class ServerClientThread extends Thread {
         } catch (final IOException exception) {
             exception.printStackTrace();
         }
-        if (this.clientName != null) {
+        if (this.connected) {
             this.disconnectClient();
-            System.out.println("[INFO] Client disconnected: " + this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort());
         }
+        System.out.println("[INFO] Client disconnected: " + this.socket.getInetAddress().getHostAddress() + ":" + this.socket.getPort());
     }
 
     private void handleMessage(final String message) {
         if (message != null && !message.isBlank()) {
             final String trimedMessage = message.trim();
-            if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
-                final Room room = this.server.getRoomManager().getRoom(this.roomName);
-                if (room != null) {
-                    if (room.isGame()) {
-                        final Game game = this.server.getGameManager().getGame(this);
-                        if (game != null) {
-                            this.server.getGameManager().handleGameInput(game, this, trimedMessage);
-                            return;
+            if (!this.authenticated) {
+                if (this.server.getAccountManager().authenticate(this.getName(), trimedMessage)) {
+                    this.sendMessage("[INFO] You have been successfully authenticated!");
+                    this.authenticated = true;
+                    this.connectClient();
+                } else {
+                    this.sendMessage("[ERROR] Authentication failed! Please try again!");
+                }
+            } else {
+                if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
+                    final Room room = this.server.getRoomManager().getRoom(this.roomName);
+                    if (room != null) {
+                        if (room.isGame()) {
+                            final Game game = this.server.getGameManager().getGame(this);
+                            if (game != null) {
+                                this.server.getGameManager().handleGameInput(game, this, trimedMessage);
+                                return;
+                            }
                         }
                     }
                 }
-            }
-            if (trimedMessage.startsWith("/") && trimedMessage.length() > 1) {
-                this.server.getCommandHandler().handleCommand(this, trimedMessage.substring(1));
-            } else {
-                this.server.broadcastMessage(this, this.clientName + ": " + trimedMessage);
+                if (trimedMessage.startsWith("/") && trimedMessage.length() > 1) {
+                    this.server.getCommandHandler().handleCommand(this, trimedMessage.substring(1));
+                } else {
+                    this.server.broadcastMessage(this, this.getName() + ": " + trimedMessage);
+                }
             }
         }
     }
@@ -90,12 +100,13 @@ public class ServerClientThread extends Thread {
     }
 
     public void connectClient() {
-        this.server.addClient(this.clientName, this);
-        this.server.broadcastMessage(this, "-> " + this.clientName + " has connected to the chat-server!");
+        this.connected = true;
+        this.server.addClient(this);
+        this.server.broadcastMessage(this, "-> " + this.getName() + " has connected to the chat-server!");
     }
 
     public void disconnectClient() {
-        this.server.broadcastMessage(this, "<- " + this.clientName + " has disconnected from the chat-server!");
+        this.server.broadcastMessage(this, "<- " + this.getName() + " has disconnected from the chat-server!");
         this.server.getGameManager().removeAllGameRequests(this);
         if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
             final Room room = this.server.getRoomManager().getRoom(this.roomName);
@@ -110,10 +121,6 @@ public class ServerClientThread extends Thread {
         } catch (final IOException exception) {
             exception.printStackTrace();
         }
-    }
-
-    public String getClientName() {
-        return this.clientName;
     }
 
     public String getRoomName() {

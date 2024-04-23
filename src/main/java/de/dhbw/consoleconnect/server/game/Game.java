@@ -1,5 +1,6 @@
 package de.dhbw.consoleconnect.server.game;
 
+import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
 import de.dhbw.consoleconnect.server.room.Room;
 
@@ -55,7 +56,7 @@ public abstract class Game {
 
     protected abstract void handleStop();
 
-    protected abstract void handleInput(final ServerClientThread client, final String input);
+    protected abstract void handleInput(final Server server, final ServerClientThread client, final String input);
 
     public GameMode getGameMode() {
         return this.gameMode;

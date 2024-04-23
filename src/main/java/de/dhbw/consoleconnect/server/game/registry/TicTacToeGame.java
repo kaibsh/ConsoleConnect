@@ -1,5 +1,6 @@
 package de.dhbw.consoleconnect.server.game.registry;
 
+import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
 import de.dhbw.consoleconnect.server.game.Game;
 import de.dhbw.consoleconnect.server.game.GameMode;
@@ -40,7 +41,7 @@ public class TicTacToeGame extends Game {
     }
 
     @Override
-    protected void handleInput(final ServerClientThread client, final String input) {
+    protected void handleInput(final Server server, final ServerClientThread client, final String input) {
         if (client != null && input != null && !input.isBlank()) {
             if (client == this.crossPlayer || client == this.circlePlayer) {
                 if (this.handleTurn(client, input)) {
@@ -48,12 +49,10 @@ public class TicTacToeGame extends Game {
                     this.broadcast("Player '" + this.currentPlayer.getCharacter() + "' made a move.");
                     if (this.checkWinner()) {
                         this.broadcast("Player '" + this.currentPlayer.getCharacter() + "' won the game!");
-                        this.broadcast("Type any KEY to exit the game.");
-                        this.stop();
+                        server.getGameManager().stopGame(this);
                     } else if (this.checkDraw()) {
                         this.broadcast("The game ended in a draw!");
-                        this.broadcast("Type any KEY to exit the game.");
-                        this.stop();
+                        server.getGameManager().stopGame(this);
                     } else {
                         this.currentPlayer = this.currentPlayer.next();
                         this.getCurrentClient().sendMessage("It's your turn!");
