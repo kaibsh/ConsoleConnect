@@ -53,11 +53,11 @@ public class GameManager {
             if (!this.isSendedGameRequestExistent(senderClient, receiverClient)) {
                 final GameRequest gameRequest = new GameRequest(gameMode, senderClient, receiverClient);
                 this.gameRequests.add(gameRequest);
-                senderClient.sendMessage("[GameManager] Successfully sent a game request to '" + receiverClient.getClientName() + "'!");
-                receiverClient.sendMessage("[GameManager] You have received a game request from '" + senderClient.getClientName() + "'!");
-                receiverClient.sendMessage("[GameManager] - Use '/game accept " + senderClient.getClientName() + "' to accept the game request.");
-                receiverClient.sendMessage("[GameManager] - Use '/game deny " + senderClient.getClientName() + "' to deny the game request.");
-                System.out.println("[GAME] Request from '" + senderClient.getClientName() + "' to '" + receiverClient.getClientName() + "' has been started.");
+                senderClient.sendMessage("[GameManager] Successfully sent a game request to '" + receiverClient.getName() + "'!");
+                receiverClient.sendMessage("[GameManager] You have received a game request from '" + senderClient.getName() + "'!");
+                receiverClient.sendMessage("[GameManager] - Use '/game accept " + senderClient.getName() + "' to accept the game request.");
+                receiverClient.sendMessage("[GameManager] - Use '/game deny " + senderClient.getName() + "' to deny the game request.");
+                System.out.println("[GAME] Request from '" + senderClient.getName() + "' to '" + receiverClient.getName() + "' has been started.");
             }
         }
     }
@@ -68,10 +68,10 @@ public class GameManager {
             if (gameRequest != null) {
                 this.gameRequests.remove(gameRequest);
                 if (!silent) {
-                    senderClient.sendMessage("[GameManager] Successfully canceled the game request to '" + receiverClient.getClientName() + "'!");
+                    senderClient.sendMessage("[GameManager] Successfully canceled the game request to '" + receiverClient.getName() + "'!");
                 }
-                receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getClientName() + "' has been canceled!");
-                System.out.println("[GAME] Request from '" + senderClient.getClientName() + "' to '" + receiverClient.getClientName() + "' has been canceled.");
+                receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getName() + "' has been canceled!");
+                System.out.println("[GAME] Request from '" + senderClient.getName() + "' to '" + receiverClient.getName() + "' has been canceled.");
             }
         }
     }
@@ -80,9 +80,9 @@ public class GameManager {
         if (receiverClient != null && senderClient != null && receiverClient != senderClient) {
             final GameRequest gameRequest = this.getGameRequest(senderClient, receiverClient);
             if (gameRequest != null) {
-                receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getClientName() + "' has been accepted!");
-                senderClient.sendMessage("[GameManager] The game request to '" + receiverClient.getClientName() + "' has been accepted!");
-                System.out.println("[GAME] Request from '" + senderClient.getClientName() + "' to '" + receiverClient.getClientName() + "' has been accepted.");
+                receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getName() + "' has been accepted!");
+                senderClient.sendMessage("[GameManager] The game request to '" + receiverClient.getName() + "' has been accepted!");
+                System.out.println("[GAME] Request from '" + senderClient.getName() + "' to '" + receiverClient.getName() + "' has been accepted.");
                 this.startGame(gameRequest);
             }
         }
@@ -94,10 +94,10 @@ public class GameManager {
             if (gameRequest != null) {
                 this.gameRequests.remove(gameRequest);
                 if (!silent) {
-                    receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getClientName() + "' has been denied!");
+                    receiverClient.sendMessage("[GameManager] The game request from '" + senderClient.getName() + "' has been denied!");
                 }
-                senderClient.sendMessage("[GameManager] The game request to '" + receiverClient.getClientName() + "' has been denied!");
-                System.out.println("[GAME] Request from '" + senderClient.getClientName() + "' to '" + receiverClient.getClientName() + "' has been declined.");
+                senderClient.sendMessage("[GameManager] The game request to '" + receiverClient.getName() + "' has been denied!");
+                System.out.println("[GAME] Request from '" + senderClient.getName() + "' to '" + receiverClient.getName() + "' has been declined.");
             }
         }
     }
@@ -119,7 +119,7 @@ public class GameManager {
         if (game != null && client != null && input != null && !input.isBlank() && this.games.contains(game) && game.getRoom().getClients().contains(client)) {
             if (game.isRunning()) {
                 if (!input.equalsIgnoreCase("exit") && !input.equalsIgnoreCase("leave") && !input.equalsIgnoreCase("stop")) {
-                    game.handleInput(client, input);
+                    game.handleInput(this.server, client, input);
                 } else {
                     this.server.getRoomManager().leaveRoom(game.getRoom(), false, client);
                 }

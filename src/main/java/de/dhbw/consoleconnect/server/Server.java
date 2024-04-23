@@ -1,6 +1,8 @@
 package de.dhbw.consoleconnect.server;
 
+import de.dhbw.consoleconnect.server.account.AccountManager;
 import de.dhbw.consoleconnect.server.command.CommandManager;
+import de.dhbw.consoleconnect.server.database.DatabaseManager;
 import de.dhbw.consoleconnect.server.game.GameManager;
 import de.dhbw.consoleconnect.server.room.Room;
 import de.dhbw.consoleconnect.server.room.RoomManager;
@@ -14,15 +16,19 @@ import java.util.Map;
 
 public class Server {
 
+    private final DatabaseManager databaseManager;
+    private final AccountManager accountManager;
     private final CommandManager commandManager;
-    private final GameManager gameManager;
     private final RoomManager roomManager;
+    private final GameManager gameManager;
     private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
 
     public Server() {
+        this.databaseManager = new DatabaseManager(this);
+        this.accountManager = new AccountManager(this);
         this.commandManager = new CommandManager(this);
-        this.gameManager = new GameManager(this);
         this.roomManager = new RoomManager(this);
+        this.gameManager = new GameManager(this);
     }
 
     public void start() {
@@ -31,7 +37,6 @@ public class Server {
             System.out.println("[INFO] The server is listening on port: '" + serverSocket.getLocalPort() + "'");
             while (true) {
                 final Socket socket = serverSocket.accept();
-
                 final ServerClientThread serverClientThread = new ServerClientThread(this, socket);
                 serverClientThread.start();
             }
@@ -68,15 +73,15 @@ public class Server {
         return null;
     }
 
-    public void addClient(final String clientName, final ServerClientThread client) {
-        if (clientName != null && !clientName.isBlank() && client != null) {
-            this.clients.put(clientName, client);
+    public void addClient(final ServerClientThread client) {
+        if (client != null) {
+            this.clients.put(client.getName(), client);
         }
     }
 
     public void removeClient(final ServerClientThread client) {
         if (client != null && this.clients.containsValue(client)) {
-            this.clients.remove(client.getClientName());
+            this.clients.remove(client.getName());
         }
     }
 
@@ -91,16 +96,24 @@ public class Server {
         return false;
     }
 
+    public DatabaseManager getDatabaseManager() {
+        return this.databaseManager;
+    }
+
+    public AccountManager getAccountManager() {
+        return this.accountManager;
+    }
+
     public CommandManager getCommandHandler() {
         return this.commandManager;
     }
 
-    public GameManager getGameManager() {
-        return this.gameManager;
-    }
-
     public RoomManager getRoomManager() {
         return this.roomManager;
+    }
+
+    public GameManager getGameManager() {
+        return this.gameManager;
     }
 
     public List<ServerClientThread> getClients() {

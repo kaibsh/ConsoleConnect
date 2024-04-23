@@ -18,17 +18,17 @@ public class ListCommand extends Command {
                 client.sendMessage("[ListCommand] Connected clients:");
                 for (final ServerClientThread targetClient : server.getClients()) {
                     if (targetClient.getRoomName().equalsIgnoreCase("GLOBAL")) {
-                        client.sendMessage("[ListCommand] - " + targetClient.getClientName());
+                        client.sendMessage("[ListCommand] - " + targetClient.getName());
                     } else {
                         final Room room = server.getRoomManager().getRoom(targetClient.getRoomName());
                         if (room != null) {
                             if (!room.isGame()) {
-                                client.sendMessage("[ListCommand] - " + targetClient.getClientName() + " @" + room.getName() + " (" + room.getClients().size() + ")");
+                                client.sendMessage("[ListCommand] - " + targetClient.getName() + " @" + room.getName().replace("ROOM-", "") + " (" + room.getClients().size() + ")");
                             } else {
-                                client.sendMessage("[ListCommand] - " + targetClient.getClientName() + " | IN-GAME");
+                                client.sendMessage("[ListCommand] - " + targetClient.getName() + " | IN-GAME");
                             }
                         } else {
-                            client.sendMessage("[ListCommand] - " + targetClient.getClientName());
+                            client.sendMessage("[ListCommand] - " + targetClient.getName());
                         }
                     }
                 }

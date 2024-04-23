@@ -14,6 +14,7 @@ public class Client {
     private final HookManager hookManager;
     private final Scanner scanner;
     private final String clientName;
+    private final String clientPassword;
     private String roomName = "GLOBAL";
 
     public Client(final boolean ignoreClientConfiguration) {
@@ -31,6 +32,17 @@ public class Client {
                 this.propertiesFile.save();
             }
         }
+        if (!ignoreClientConfiguration && this.propertiesFile.getProperties().containsKey("client.password")) {
+            this.clientPassword = this.propertiesFile.getProperties().getProperty("client.password");
+        } else {
+            System.out.println("Please enter your password: ");
+            System.out.print("> ");
+            this.clientPassword = this.scanner.nextLine();
+            if (!ignoreClientConfiguration) {
+                this.propertiesFile.getProperties().put("client.password", this.clientPassword);
+                this.propertiesFile.save();
+            }
+        }
     }
 
     public void connect() {
@@ -41,6 +53,7 @@ public class Client {
             final ClientThread clientThread = new ClientThread(this, socket);
             clientThread.start();
             printWriter.println("[HANDSHAKE] " + this.clientName);
+            printWriter.println(this.clientPassword);
             while (clientThread.isAlive()) {
                 final String input = this.scanner.nextLine();
                 if (input != null && !input.isBlank()) {
@@ -61,6 +74,10 @@ public class Client {
 
     public String getClientName() {
         return this.clientName;
+    }
+
+    public String getClientPassword() {
+        return this.clientPassword;
     }
 
     public String getRoomName() {

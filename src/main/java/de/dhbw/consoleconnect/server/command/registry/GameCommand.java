@@ -42,13 +42,13 @@ public class GameCommand extends Command {
                     if (!sendedGameRequests.isEmpty()) {
                         client.sendMessage("[GameCommand] Sent game requests:");
                         for (final GameRequest gameRequest : sendedGameRequests) {
-                            client.sendMessage("[GameCommand] • -> " + gameRequest.getReceiver().getClientName() + " (" + gameRequest.getGameMode().getName() + ")");
+                            client.sendMessage("[GameCommand] • -> " + gameRequest.getReceiver().getName() + " (" + gameRequest.getGameMode().getName() + ")");
                         }
                     }
                     if (!receivedGameRequests.isEmpty()) {
                         client.sendMessage("[GameCommand] Received game requests:");
                         for (final GameRequest gameRequest : receivedGameRequests) {
-                            client.sendMessage("[GameCommand] • <- " + gameRequest.getSender().getClientName() + " (" + gameRequest.getGameMode().getName() + ")");
+                            client.sendMessage("[GameCommand] • <- " + gameRequest.getSender().getName() + " (" + gameRequest.getGameMode().getName() + ")");
                         }
                     }
                 } else {
@@ -64,15 +64,15 @@ public class GameCommand extends Command {
             }
         } else if (arguments.length == 2) {
             if (arguments[0].equalsIgnoreCase("cancel")) {
-                final String clientName = arguments[1].trim();
+                final String clientName = arguments[1];
                 if (!clientName.isBlank()) {
-                    if (!client.getClientName().equalsIgnoreCase(clientName)) {
+                    if (!client.getName().equalsIgnoreCase(clientName)) {
                         if (server.containsClient(clientName)) {
                             final ServerClientThread receiverClient = server.getClient(clientName);
                             if (server.getGameManager().isSendedGameRequestExistent(client, receiverClient)) {
                                 server.getGameManager().cancelGameRequest(client, receiverClient, false);
                             } else {
-                                client.sendMessage("[GameCommand] You have not sent a game request to '" + receiverClient.getClientName() + "'!");
+                                client.sendMessage("[GameCommand] You have not sent a game request to '" + receiverClient.getName() + "'!");
                             }
                         } else {
                             client.sendMessage("[GameCommand] The specified client does not exist!");
@@ -84,15 +84,15 @@ public class GameCommand extends Command {
                     client.sendMessage("[GameCommand] Usage: '/game cancel <clientName>'");
                 }
             } else if (arguments[0].equalsIgnoreCase("accept")) {
-                final String clientName = arguments[1].trim();
+                final String clientName = arguments[1];
                 if (!clientName.isBlank()) {
-                    if (!client.getClientName().equalsIgnoreCase(clientName)) {
+                    if (!client.getName().equalsIgnoreCase(clientName)) {
                         if (server.containsClient(clientName)) {
                             final ServerClientThread senderClient = server.getClient(clientName);
                             if (server.getGameManager().isReceivedGameRequestExistent(client, senderClient)) {
                                 server.getGameManager().acceptGameRequest(client, senderClient);
                             } else {
-                                client.sendMessage("[GameCommand] You have not received a game request from '" + senderClient.getClientName() + "'!");
+                                client.sendMessage("[GameCommand] You have not received a game request from '" + senderClient.getName() + "'!");
                             }
                         } else {
                             client.sendMessage("[GameCommand] The specified client does not exist!");
@@ -104,15 +104,15 @@ public class GameCommand extends Command {
                     client.sendMessage("[GameCommand] Usage: '/game cancel <clientName>'");
                 }
             } else if (arguments[0].equalsIgnoreCase("deny")) {
-                final String clientName = arguments[1].trim();
+                final String clientName = arguments[1];
                 if (!clientName.isBlank()) {
-                    if (!client.getClientName().equalsIgnoreCase(clientName)) {
+                    if (!client.getName().equalsIgnoreCase(clientName)) {
                         if (server.containsClient(clientName)) {
                             final ServerClientThread senderClient = server.getClient(clientName);
                             if (server.getGameManager().isReceivedGameRequestExistent(client, senderClient)) {
                                 server.getGameManager().denyGameRequest(client, senderClient, false);
                             } else {
-                                client.sendMessage("[GameCommand] You have not received a game request from '" + senderClient.getClientName() + "'!");
+                                client.sendMessage("[GameCommand] You have not received a game request from '" + senderClient.getName() + "'!");
                             }
                         } else {
                             client.sendMessage("[GameCommand] The specified client does not exist!");
@@ -124,14 +124,14 @@ public class GameCommand extends Command {
                     client.sendMessage("[GameCommand] Usage: '/game cancel <clientName>'");
                 }
             } else if (arguments[0].equalsIgnoreCase("requests")) {
-                final String type = arguments[1].trim();
+                final String type = arguments[1];
                 if (!type.isBlank()) {
                     if (type.equalsIgnoreCase("SENDED")) {
                         final List<GameRequest> sendedGameRequests = server.getGameManager().getSendedGameRequests(client);
                         if (!sendedGameRequests.isEmpty()) {
                             client.sendMessage("[GameCommand] Sent game requests:");
                             for (final GameRequest gameRequest : sendedGameRequests) {
-                                client.sendMessage("[GameCommand] • -> " + gameRequest.getReceiver().getClientName() + " (" + gameRequest.getGameMode().getName() + ")");
+                                client.sendMessage("[GameCommand] • -> " + gameRequest.getReceiver().getName() + " (" + gameRequest.getGameMode().getName() + ")");
                             }
                         } else {
                             client.sendMessage("[GameCommand] No sent game requests found!");
@@ -141,7 +141,7 @@ public class GameCommand extends Command {
                         if (!receivedGameRequests.isEmpty()) {
                             client.sendMessage("[GameCommand] Received game requests:");
                             for (final GameRequest gameRequest : receivedGameRequests) {
-                                client.sendMessage("[GameCommand] • <- " + gameRequest.getSender().getClientName() + " (" + gameRequest.getGameMode().getName() + ")");
+                                client.sendMessage("[GameCommand] • <- " + gameRequest.getSender().getName() + " (" + gameRequest.getGameMode().getName() + ")");
                             }
                         } else {
                             client.sendMessage("[GameCommand] No received game requests found!");
@@ -157,13 +157,13 @@ public class GameCommand extends Command {
             }
         } else if (arguments.length == 3) {
             if (arguments[0].equalsIgnoreCase("invite")) {
-                final String rawGameMode = arguments[1].trim();
+                final String rawGameMode = arguments[1];
                 if (!rawGameMode.isBlank()) {
                     final GameMode resolvedGameMode = this.resolveGameMode(rawGameMode);
                     if (resolvedGameMode != null) {
-                        final String clientName = arguments[2].trim();
+                        final String clientName = arguments[2];
                         if (!clientName.isBlank()) {
-                            if (!client.getClientName().equalsIgnoreCase(clientName)) {
+                            if (!client.getName().equalsIgnoreCase(clientName)) {
                                 if (server.containsClient(clientName)) {
                                     final ServerClientThread receiverClient = server.getClient(clientName);
                                     if (!receiverClient.getRoomName().equalsIgnoreCase("GLOBAL")) {
@@ -178,7 +178,7 @@ public class GameCommand extends Command {
                                     if (!server.getGameManager().isSendedGameRequestExistent(client, receiverClient)) {
                                         server.getGameManager().startGameRequest(resolvedGameMode, client, receiverClient);
                                     } else {
-                                        client.sendMessage("[GameCommand] You have already sent a game request to '" + receiverClient.getClientName() + "'!");
+                                        client.sendMessage("[GameCommand] You have already sent a game request to '" + receiverClient.getName() + "'!");
                                     }
                                 } else {
                                     client.sendMessage("[GameCommand] The specified client does not exist!");

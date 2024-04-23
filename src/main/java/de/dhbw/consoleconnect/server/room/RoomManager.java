@@ -26,9 +26,9 @@ public class RoomManager {
                 }
                 room.addClient(client);
                 if (!silent) {
-                    room.broadcastMessage("-> " + client.getClientName() + " has entered the chat-room!", true);
+                    room.broadcastMessage("-> " + client.getName() + " has entered the chat-room!", true);
                 }
-                System.out.println("[ROOM] Client '" + client.getClientName() + "' has joined the room '" + room.getName() + "'.");
+                System.out.println("[ROOM] Client '" + client.getName() + "' has joined the room '" + room.getName() + "'.");
             }
         }
     }
@@ -40,15 +40,15 @@ public class RoomManager {
                     final Game game = this.server.getGameManager().getGame(client);
                     if (game != null && game.isRunning()) {
                         if (!silent) {
-                            room.broadcastMessage("<- " + client.getClientName() + " has left the chat-room!", true);
+                            room.broadcastMessage("<- " + client.getName() + " has left the chat-room!", true);
                         }
                         this.server.getGameManager().stopGame(game);
                         return;
                     }
                 }
-                System.out.println("[ROOM] Client '" + client.getClientName() + "' has left the room '" + room.getName() + "'.");
+                System.out.println("[ROOM] Client '" + client.getName() + "' has left the room '" + room.getName() + "'.");
                 if (!silent) {
-                    room.broadcastMessage("<- " + client.getClientName() + " has left the chat-room!", true);
+                    room.broadcastMessage("<- " + client.getName() + " has left the chat-room!", true);
                 }
                 room.removeClient(client);
                 if (room.isEmtpy() && !room.isGame()) {
@@ -68,7 +68,7 @@ public class RoomManager {
                 }
                 room.addClient(client);
             }
-            System.out.println("[ROOM] Room '" + room.getName() + "' has been added by '" + String.join("', '", Arrays.stream(clients).map(ServerClientThread::getClientName).toList()) + "'.");
+            System.out.println("[ROOM] Room '" + room.getName() + "' has been added by '" + String.join("', '", Arrays.stream(clients).map(ServerClientThread::getName).toList()) + "'.");
             room.broadcastMessage("[RoomManager] The room has been added! You have been moved to the private chat-room.", true);
         }
     }
@@ -108,14 +108,14 @@ public class RoomManager {
         return null;
     }
 
-    public int calculateGameRooms() {
+    public int calculateBasicRooms() {
         int gameRooms = 0;
         for (final Room room : this.rooms) {
             if (room.isGame()) {
                 gameRooms++;
             }
         }
-        return gameRooms;
+        return this.getRooms().size() - gameRooms;
     }
 
     public List<Room> getRooms() {
