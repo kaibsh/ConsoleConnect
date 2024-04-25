@@ -18,6 +18,7 @@ public class ServerClientThread extends Thread {
     private boolean connected = false;
     private boolean authenticated = false;
     private String roomName = "GLOBAL";
+    private String reply = "";
 
     public ServerClientThread(final Server server, final Socket socket) throws IOException {
         this.server = server;
@@ -99,6 +100,14 @@ public class ServerClientThread extends Thread {
         }
     }
 
+    public void sendPrivateMessage(final ServerClientThread client, final String message) {
+        if (client != null && message != null && !message.isBlank()) {
+            this.sendMessage("[" + client.getName() + "] -->: " + message);
+            client.sendMessage("[" + this.getName() + "] <--: " + message);
+            client.setReply(this.getName());
+        }
+    }
+
     public void connectClient() {
         this.connected = true;
         this.server.addClient(this);
@@ -108,6 +117,11 @@ public class ServerClientThread extends Thread {
     public void disconnectClient() {
         this.server.broadcastMessage(this, "<- " + this.getName() + " has disconnected from the chat-server!");
         this.server.getGameManager().removeAllGameRequests(this);
+        for (final ServerClientThread client : this.server.getClients()) {
+            if (client.getReply().equalsIgnoreCase(this.getName())) {
+                client.setReply("");
+            }
+        }
         if (!this.roomName.equalsIgnoreCase("GLOBAL")) {
             final Room room = this.server.getRoomManager().getRoom(this.roomName);
             if (room != null) {
@@ -130,6 +144,16 @@ public class ServerClientThread extends Thread {
     public void setRoomName(final String roomName) {
         if (roomName != null && !roomName.isBlank()) {
             this.roomName = roomName;
+        }
+    }
+
+    public String getReply() {
+        return this.reply;
+    }
+
+    public void setReply(final String reply) {
+        if (reply != null && !reply.isBlank()) {
+            this.reply = reply;
         }
     }
 }
