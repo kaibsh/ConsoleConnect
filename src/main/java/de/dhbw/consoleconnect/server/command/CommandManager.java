@@ -31,6 +31,12 @@ public class CommandManager {
         final ListCommand listCommand = new ListCommand();
         this.commands.put(listCommand.getName(), listCommand);
 
+        final MessageCommand messageCommand = new MessageCommand();
+        this.commands.put(messageCommand.getName(), messageCommand);
+
+        final ReplyCommand replyCommand = new ReplyCommand();
+        this.commands.put(replyCommand.getName(), replyCommand);
+
         final RoomCommand roomCommand = new RoomCommand();
         this.commands.put(roomCommand.getName(), roomCommand);
 

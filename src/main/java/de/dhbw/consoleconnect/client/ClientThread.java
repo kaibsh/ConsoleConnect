@@ -53,6 +53,7 @@ public class ClientThread extends Thread {
 
     public void clearMessages() {
         this.displayMessage("[INFO] Clearing the console...");
+        this.messages.clear();
 /*      try {
             final String osName = System.getProperty("os.name");
             if (osName.contains("Windows")) {
@@ -60,7 +61,6 @@ public class ClientThread extends Thread {
             } else {
                 Runtime.getRuntime().exec("clear");
             }
-            this.messages.clear();
         } catch (final IOException exception) {
             System.out.println("Error while clearing the console.");
         }*/

@@ -123,11 +123,17 @@ public class GameManager {
                 } else {
                     this.server.getRoomManager().leaveRoom(game.getRoom(), false, client);
                 }
-            } else {
-                System.out.println("DEBUG: Game is not running!");
-                this.stopGame(game);
             }
         }
+    }
+
+    public boolean isInGame(final ServerClientThread client) {
+        for (final Game game : this.games) {
+            if (game.getRoom().getClients().contains(client)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Game getGame(final ServerClientThread client) {
