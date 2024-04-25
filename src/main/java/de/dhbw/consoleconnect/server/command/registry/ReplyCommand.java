@@ -12,7 +12,9 @@ public class ReplyCommand extends Command {
 
     @Override
     protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
-        if (arguments.length >= 1) {
+        if (arguments == null) {
+            client.sendMessage("[ReplyCommand] Usage: /reply <message>");
+        } else if (arguments.length >= 1) {
             if (!client.getReply().isBlank()) {
                 final String message = String.join(" ", arguments);
                 if (!message.isBlank()) {
@@ -20,7 +22,8 @@ public class ReplyCommand extends Command {
                     if (receiverClient != null) {
                         client.sendPrivateMessage(receiverClient, message);
                     } else {
-                        client.sendMessage("[ReplyCommand] The specified client does not exist!");
+                        client.setReply("");
+                        client.sendMessage("[ReplyCommand] The recipient of the message is not longer connected!");
                     }
                 } else {
                     client.sendMessage("[ReplyCommand] The message cannot be empty!");

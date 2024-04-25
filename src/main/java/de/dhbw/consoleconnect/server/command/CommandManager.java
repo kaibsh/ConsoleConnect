@@ -31,6 +31,9 @@ public class CommandManager {
         final ListCommand listCommand = new ListCommand();
         this.commands.put(listCommand.getName(), listCommand);
 
+        final LookupCommand lookupCommand = new LookupCommand();
+        this.commands.put(lookupCommand.getName(), lookupCommand);
+
         final MessageCommand messageCommand = new MessageCommand();
         this.commands.put(messageCommand.getName(), messageCommand);
 
@@ -42,6 +45,9 @@ public class CommandManager {
 
         final SaveCommand saveCommand = new SaveCommand();
         this.commands.put(saveCommand.getName(), saveCommand);
+
+        final StatusCommand statusCommand = new StatusCommand();
+        this.commands.put(statusCommand.getName(), statusCommand);
     }
 
     public void handleCommand(final ServerClientThread client, final String commandLine) {
