@@ -5,6 +5,7 @@ public class Account {
     private int id;
     private String name;
     private String password;
+    private String status;
 
     public int getId() {
         return this.id;
@@ -22,7 +23,7 @@ public class Account {
 
     public void setName(final String name) {
         if (name != null && !name.isBlank()) {
-            this.name = name;
+            this.name = name.toLowerCase();
         }
     }
 
@@ -33,6 +34,16 @@ public class Account {
     public void setPassword(final String password) {
         if (password != null && !password.isBlank()) {
             this.password = password;
+        }
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(final String status) {
+        if (status != null && !status.isBlank()) {
+            this.status = status;
         }
     }
 }
