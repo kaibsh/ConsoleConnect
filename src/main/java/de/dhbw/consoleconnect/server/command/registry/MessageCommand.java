@@ -12,7 +12,9 @@ public class MessageCommand extends Command {
 
     @Override
     protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
-        if (arguments.length >= 2) {
+        if (arguments == null) {
+            client.sendMessage("[MessageCommand] Usage: /message <clientName> <message>");
+        } else if (arguments.length >= 2) {
             final String receiverClientName = arguments[0];
             if (!receiverClientName.isBlank()) {
                 if (!client.getName().equalsIgnoreCase(receiverClientName)) {

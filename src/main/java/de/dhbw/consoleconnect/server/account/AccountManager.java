@@ -25,7 +25,7 @@ public class AccountManager {
                 newAccount.setName(name);
                 newAccount.setPassword(password);
                 this.accountDatabase.insertAccount(newAccount);
-                System.out.println("[ACCOUNT] Created account '" + newAccount.getName() + " with password '" + newAccount.getPassword() + "'.");
+                System.out.println("[ACCOUNT] Created account '" + newAccount.getName() + "' with password '" + newAccount.getPassword() + "'.");
                 return true;
             }
         }
@@ -39,6 +39,19 @@ public class AccountManager {
                 account.setPassword(newPassword);
                 this.accountDatabase.updateAccount(account);
                 System.out.println("[ACCOUNT] Changed password '" + newPassword + "' for account '" + account.getName() + "'.");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean changeStatus(final String name, final String status) {
+        if (name != null && !name.isBlank() && status != null && !status.isBlank()) {
+            final Account account = this.accountDatabase.selectAccount(name);
+            if (account != null) {
+                account.setStatus(status);
+                this.accountDatabase.updateAccount(account);
+                System.out.println("[ACCOUNT] Changed status '" + status + "' for account '" + account.getName() + "'.");
                 return true;
             }
         }

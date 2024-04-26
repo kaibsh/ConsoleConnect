@@ -21,7 +21,7 @@ public class TicTacToeGame extends Game {
     }
 
     @Override
-    protected void handleStart() {
+    protected void initialize() {
         if (this.getRoom().getClients().size() == 2) {
             this.renderBoard();
             this.broadcast("**** Welcome to TicTacToe ****");
@@ -30,14 +30,10 @@ public class TicTacToeGame extends Game {
             this.crossPlayer.sendMessage("Your symbol is: " + Symbol.CROSS.getCharacter());
             this.circlePlayer = this.getRoom().getClients().get(startingPlayer == 0 ? 1 : 0);
             this.circlePlayer.sendMessage("Your symbol is: " + Symbol.CIRCLE.getCharacter());
-            this.broadcast("The first move needs to be made by '" + this.currentPlayer.getCharacter() + "'.");
+            this.broadcast("The first move needs to be made by: " + this.currentPlayer.getCharacter());
         } else {
             throw new IllegalStateException("The Tic-Tac-Toe game mode needs exactly 2 players!");
         }
-    }
-
-    @Override
-    protected void handleStop() {
     }
 
     @Override
@@ -48,7 +44,7 @@ public class TicTacToeGame extends Game {
                     this.renderBoard();
                     this.broadcast("Player '" + this.currentPlayer.getCharacter() + "' made a move.");
                     if (this.checkWinner()) {
-                        this.broadcast("Player '" + this.currentPlayer.getCharacter() + "' won the game!");
+                        this.broadcast("The Player '" + this.getCurrentClient().getName() + "' has won the game!");
                         server.getGameManager().stopGame(this);
                     } else if (this.checkDraw()) {
                         this.broadcast("The game ended in a draw!");
@@ -152,8 +148,8 @@ public class TicTacToeGame extends Game {
 
     private enum Symbol {
 
-        CROSS('X'),
-        CIRCLE('O');
+        CROSS('x'),
+        CIRCLE('o');
 
         private final char character;
 

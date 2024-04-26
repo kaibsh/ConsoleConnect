@@ -2,6 +2,7 @@ package de.dhbw.consoleconnect.server.game;
 
 public enum GameMode {
 
+    ROCK_PAPER_SCISSOR("Rock-Paper-Scissor"),
     TIC_TAC_TOE("Tic-Tac-Toe");
 
     private final String name;

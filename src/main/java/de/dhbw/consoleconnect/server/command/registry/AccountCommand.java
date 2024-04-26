@@ -39,6 +39,7 @@ public class AccountCommand extends Command {
                     client.sendMessage("[AccountCommand] Details:");
                     client.sendMessage("[AccountCommand] - Name: " + account.getName());
                     client.sendMessage("[AccountCommand] - Password: " + account.getPassword());
+                    client.sendMessage("[AccountCommand] - Status: " + account.getStatus());
                 } else {
                     client.sendMessage("[AccountCommand] Account not found!");
                 }
