@@ -20,7 +20,7 @@ public abstract class Game {
     protected final void start() {
         if (!this.running) {
             this.clear();
-            this.handleStart();
+            this.initialize();
             this.running = true;
         }
     }
@@ -28,7 +28,6 @@ public abstract class Game {
     protected final void stop() {
         if (this.running) {
             this.running = false;
-            this.handleStop();
         }
     }
 
@@ -52,9 +51,7 @@ public abstract class Game {
         }
     }
 
-    protected abstract void handleStart();
-
-    protected abstract void handleStop();
+    protected abstract void initialize();
 
     protected abstract void handleInput(final Server server, final ServerClientThread client, final String input);
 

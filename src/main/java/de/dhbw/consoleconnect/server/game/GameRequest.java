@@ -1,6 +1,7 @@
 package de.dhbw.consoleconnect.server.game;
 
 import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.game.registry.RockPaperScissorGame;
 import de.dhbw.consoleconnect.server.game.registry.TicTacToeGame;
 
 public class GameRequest {
@@ -17,7 +18,9 @@ public class GameRequest {
 
     protected Game resolve() {
         final Game game;
-        if (this.gameMode.equals(GameMode.TIC_TAC_TOE)) {
+        if (this.gameMode.equals(GameMode.ROCK_PAPER_SCISSOR)) {
+            game = new RockPaperScissorGame();
+        } else if (this.gameMode.equals(GameMode.TIC_TAC_TOE)) {
             game = new TicTacToeGame();
         } else {
             throw new IllegalArgumentException("Unsupported game mode: " + this.gameMode);
