@@ -22,7 +22,7 @@ public class AccountCommand extends Command {
                 client.sendMessage("[AccountCommand] - '/account details' | Show your account details.");
                 client.sendMessage("[AccountCommand] - '/account change-password <newPassword>' | Change your password.");
             } else if (arguments[0].equalsIgnoreCase("delete")) {
-                final Account account = server.getAccountManager().getAccount(client.getName());
+                final Account account = server.getAccountManager().getAccountByName(client.getName());
                 if (account != null) {
                     if (server.getAccountManager().deleteAccount(account)) {
                         client.sendMessage("[AccountCommand] Successfully deleted account!");
@@ -34,7 +34,7 @@ public class AccountCommand extends Command {
                     client.sendMessage("[AccountCommand] Account not found!");
                 }
             } else if (arguments[0].equalsIgnoreCase("details")) {
-                final Account account = server.getAccountManager().getAccount(client.getName());
+                final Account account = server.getAccountManager().getAccountByName(client.getName());
                 if (account != null) {
                     client.sendMessage("[AccountCommand] Details:");
                     client.sendMessage("[AccountCommand] - Name: " + account.getName());

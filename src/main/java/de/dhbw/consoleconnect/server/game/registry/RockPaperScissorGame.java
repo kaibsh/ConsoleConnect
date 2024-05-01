@@ -58,9 +58,11 @@ public class RockPaperScissorGame extends Game {
                 firstPlayerSelection == Selection.ROCK && secondPlayerSelection == Selection.SCISSOR ||
                 firstPlayerSelection == Selection.PAPER && secondPlayerSelection == Selection.ROCK ||
                 firstPlayerSelection == Selection.SCISSOR && secondPlayerSelection == Selection.PAPER) {
+            this.setWinner(this.firstPlayerSelection.getKey());
             this.broadcast(firstPlayerSelection.name() + " beats " + secondPlayerSelection.name() + "!");
             this.broadcast("The Player '" + this.firstPlayerSelection.getKey().getName() + "' has won the game!");
         } else {
+            this.setWinner(this.secondPlayerSelection.getKey());
             this.broadcast(secondPlayerSelection.name() + " beats " + firstPlayerSelection.name() + "!");
             this.broadcast("The Player '" + this.secondPlayerSelection.getKey().getName() + "' has won the game!");
         }

@@ -14,10 +14,10 @@ public class AccountDatabase extends Database {
     protected void createTables() {
         try (final Statement statement = this.getConnection().createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS accounts (" +
-                    "id INT PRIMARY KEY AUTO_INCREMENT," +
-                    "name VARCHAR(32) NOT NULL," +
-                    "password VARCHAR(32) NOT NULL," +
-                    "status VARCHAR(32) NULL DEFAULT 'Hey, I am using ConsoleConnect!'" +
+                    "id INT NOT NULL PRIMARY KEY AUTO_INCREMENT," +
+                    "name VARCHAR(255) NOT NULL," +
+                    "password VARCHAR(255) NOT NULL," +
+                    "status VARCHAR(255) NULL DEFAULT 'Hey, I am using ConsoleConnect!'" +
                     ")"
             );
         } catch (final SQLException exception) {
@@ -25,10 +25,30 @@ public class AccountDatabase extends Database {
         }
     }
 
-    public Account selectAccount(final String name) {
-        if (name != null && !name.isBlank()) {
+    public Account selectAccountById(final int accountId) {
+        try (final PreparedStatement preparedStatement = this.getConnection().prepareStatement("SELECT * FROM accounts WHERE id = ?")) {
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.execute();
+            try (final ResultSet resultSet = preparedStatement.getResultSet()) {
+                if (resultSet.next()) {
+                    final Account account = new Account();
+                    account.setId(resultSet.getInt("id"));
+                    account.setName(resultSet.getString("name"));
+                    account.setPassword(resultSet.getString("password"));
+                    account.setStatus(resultSet.getString("status"));
+                    return account;
+                }
+            }
+        } catch (final SQLException exception) {
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    public Account selectAccountByName(final String accountName) {
+        if (accountName != null && !accountName.isBlank()) {
             try (final PreparedStatement preparedStatement = this.getConnection().prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
-                preparedStatement.setString(1, name.toLowerCase());
+                preparedStatement.setString(1, accountName.toLowerCase());
                 preparedStatement.execute();
                 try (final ResultSet resultSet = preparedStatement.getResultSet()) {
                     if (resultSet.next()) {

@@ -44,6 +44,7 @@ public class TicTacToeGame extends Game {
                     this.renderBoard();
                     this.broadcast("Player '" + this.currentPlayer.getCharacter() + "' made a move.");
                     if (this.checkWinner()) {
+                        this.setWinner(this.getCurrentClient());
                         this.broadcast("The Player '" + this.getCurrentClient().getName() + "' has won the game!");
                         server.getGameManager().stopGame(this);
                     } else if (this.checkDraw()) {

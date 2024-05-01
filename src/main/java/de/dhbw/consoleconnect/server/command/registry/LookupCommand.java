@@ -18,13 +18,13 @@ public class LookupCommand extends Command {
         } else if (arguments.length == 1) {
             final String targetClientName = arguments[0];
             if (!targetClientName.isBlank()) {
-                final Account account = server.getAccountManager().getAccount(targetClientName);
+                final Account account = server.getAccountManager().getAccountByName(targetClientName);
                 if (account != null) {
                     client.sendMessage("[LookupCommand] Lookup:");
                     client.sendMessage("[LookupCommand] - Name: " + account.getName());
                     client.sendMessage("[LookupCommand] - Status: " + account.getStatus());
                 } else {
-                    client.sendMessage("[LookupCommand] Client not found!");
+                    client.sendMessage("[LookupCommand] Account not found!");
                 }
             } else {
                 client.sendMessage("[LookupCommand] Usage: /lookup <clientName>");

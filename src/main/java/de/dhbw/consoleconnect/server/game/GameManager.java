@@ -2,19 +2,23 @@ package de.dhbw.consoleconnect.server.game;
 
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.account.Account;
+import de.dhbw.consoleconnect.server.database.registry.GameHistoryDatabase;
 import de.dhbw.consoleconnect.server.room.Room;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class GameManager {
 
     private final Server server;
+    private final GameHistoryDatabase gameHistoryDatabase;
     private final List<Game> games = new LinkedList<>();
     private final List<GameRequest> gameRequests = new LinkedList<>();
 
     public GameManager(final Server server) {
         this.server = server;
+        this.gameHistoryDatabase = new GameHistoryDatabase();
+        this.server.getDatabaseManager().registerDatabase(this.gameHistoryDatabase);
     }
 
     public void startGame(final GameRequest gameRequest) {
@@ -33,6 +37,23 @@ public class GameManager {
     public void stopGame(final Game game) {
         if (game != null && this.games.contains(game)) {
             game.stop();
+
+            //START: GameHistory
+            final GameHistory gameHistory = new GameHistory();
+            gameHistory.setId(game.getId());
+            gameHistory.setGameMode(game.getGameMode());
+            gameHistory.setStartTime(game.getStartTime());
+            gameHistory.setEndTime(game.getEndTime());
+            gameHistory.setDraw(game.getWinner() == null);
+            for (final ServerClientThread client : game.getRoom().getClients()) {
+                final Account account = this.server.getAccountManager().getAccountByName(client.getName());
+                if (account != null) {
+                    gameHistory.getPlayers().put(account, (game.getWinner() != null && game.getWinner() == client));
+                }
+            }
+            this.gameHistoryDatabase.insertGameHistory(gameHistory);
+            //END: GameHistory
+
             this.games.remove(game);
             this.server.getRoomManager().removeRoom(game.getRoom());
             System.out.println("[GAME] Game '" + game.getRoom().getName() + "' has been stopped.");
@@ -125,6 +146,28 @@ public class GameManager {
                 }
             }
         }
+    }
+
+    public List<GameHistory> getGameHistories(final Account account) {
+        final List<GameHistory> gameHistories = new ArrayList<>();
+        if (account != null) {
+            final List<UUID> gameHistoryIDs = this.gameHistoryDatabase.selectGameHistoryIDs(account);
+            for (final UUID gameId : gameHistoryIDs) {
+                final GameHistory gameHistory = this.gameHistoryDatabase.selectGameHistory(gameId);
+                if (gameHistory != null) {
+                    final Map<Integer, Boolean> players = this.gameHistoryDatabase.selectGameHistoryPlayers(gameId);
+                    for (final Map.Entry<Integer, Boolean> player : players.entrySet()) {
+                        final Account playerAccount = this.server.getAccountManager().getAccountById(player.getKey());
+                        if (playerAccount != null) {
+                            gameHistory.getPlayers().put(playerAccount, player.getValue());
+                        }
+                    }
+                    gameHistories.add(gameHistory);
+                }
+            }
+
+        }
+        return gameHistories;
     }
 
     public boolean isInGame(final ServerClientThread client) {

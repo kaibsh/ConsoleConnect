@@ -2,7 +2,9 @@ package de.dhbw.consoleconnect.server.command.registry;
 
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
+import de.dhbw.consoleconnect.server.game.GameHistory;
 import de.dhbw.consoleconnect.server.game.GameMode;
 import de.dhbw.consoleconnect.server.game.GameRequest;
 
@@ -33,6 +35,7 @@ public class GameCommand extends Command {
                 client.sendMessage("[GameCommand] - '/game accept <clientName>' | Accepts a game request from the specified client.");
                 client.sendMessage("[GameCommand] - '/game deny <clientName>' | Denies a game request from the specified client.");
                 client.sendMessage("[GameCommand] - '/game requests (<SENDED ? RECEIVED>)' | Lists all game requests.");
+                client.sendMessage("[GameCommand] - '/game statistics' | Shows the game statistics.");
                 client.sendMessage("[GameCommand] - '/game modes' | Lists all available game modes.");
             } else if (arguments[0].equalsIgnoreCase("requests")) {
                 final List<GameRequest> sendedGameRequests = server.getGameManager().getSendedGameRequests(client);
@@ -52,6 +55,21 @@ public class GameCommand extends Command {
                     }
                 } else {
                     client.sendMessage("[GameCommand] No game requests found!");
+                }
+            } else if (arguments[0].equalsIgnoreCase("history")) {
+                final Account account = server.getAccountManager().getAccountByName(client.getName());
+                if (account != null) {
+                    final List<GameHistory> gameHistories = server.getGameManager().getGameHistories(account);
+                    if (!gameHistories.isEmpty()) {
+                        client.sendMessage("[GameCommand] Game history:");
+                        for (final GameHistory gameHistory : gameHistories) {
+                            client.sendMessage("[GameCommand] • " + gameHistory.getGameMode().getName() + " | " + gameHistory.getDuration().getSeconds() + " seconds" + (gameHistory.isDraw() ? " (Draw)" : ""));
+                        }
+                    } else {
+                        client.sendMessage("[GameCommand] No game history found!");
+                    }
+                } else {
+                    client.sendMessage("[GameCommand] Account not found!");
                 }
             } else if (arguments[0].equalsIgnoreCase("modes")) {
                 client.sendMessage("[GameCommand] Available game modes:");
