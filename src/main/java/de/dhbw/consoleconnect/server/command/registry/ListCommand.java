@@ -54,7 +54,7 @@ public class ListCommand extends Command {
     }
 
     private String getStatus(final Server server, final ServerClientThread client) {
-        final Account account = server.getAccountManager().getAccount(client.getName());
+        final Account account = server.getAccountManager().getAccountByName(client.getName());
         if (account != null) {
             if (account.getStatus() != null) {
                 return account.getStatus();

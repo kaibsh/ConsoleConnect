@@ -16,7 +16,7 @@ public class AccountManager {
 
     public boolean authenticate(final String name, final String password) {
         if (name != null && !name.isBlank() && password != null && !password.isBlank()) {
-            final Account account = this.accountDatabase.selectAccount(name);
+            final Account account = this.accountDatabase.selectAccountByName(name);
             if (account != null) {
                 System.out.println("[ACCOUNT] Authenticated account '" + account.getName() + "' with password '" + account.getPassword() + "'.");
                 return account.getPassword().equals(password);
@@ -34,7 +34,7 @@ public class AccountManager {
 
     public boolean changePassword(final String name, final String newPassword) {
         if (name != null && !name.isBlank() && newPassword != null && !newPassword.isBlank()) {
-            final Account account = this.accountDatabase.selectAccount(name);
+            final Account account = this.accountDatabase.selectAccountByName(name);
             if (account != null) {
                 account.setPassword(newPassword);
                 this.accountDatabase.updateAccount(account);
@@ -47,7 +47,7 @@ public class AccountManager {
 
     public boolean changeStatus(final String name, final String status) {
         if (name != null && !name.isBlank() && status != null && !status.isBlank()) {
-            final Account account = this.accountDatabase.selectAccount(name);
+            final Account account = this.accountDatabase.selectAccountByName(name);
             if (account != null) {
                 account.setStatus(status);
                 this.accountDatabase.updateAccount(account);
@@ -67,9 +67,13 @@ public class AccountManager {
         return false;
     }
 
-    public Account getAccount(final String name) {
+    public Account getAccountById(final int id) {
+        return this.accountDatabase.selectAccountById(id);
+    }
+
+    public Account getAccountByName(final String name) {
         if (name != null && !name.isBlank()) {
-            return this.accountDatabase.selectAccount(name);
+            return this.accountDatabase.selectAccountByName(name);
         }
         return null;
     }

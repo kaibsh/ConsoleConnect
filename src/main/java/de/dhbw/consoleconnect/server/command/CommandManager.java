@@ -46,6 +46,9 @@ public class CommandManager {
         final SaveCommand saveCommand = new SaveCommand();
         this.commands.put(saveCommand.getName(), saveCommand);
 
+        final StatisticsCommand statisticsCommand = new StatisticsCommand();
+        this.commands.put(statisticsCommand.getName(), statisticsCommand);
+
         final StatusCommand statusCommand = new StatusCommand();
         this.commands.put(statusCommand.getName(), statusCommand);
     }
