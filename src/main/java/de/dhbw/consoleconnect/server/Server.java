@@ -2,7 +2,9 @@ package de.dhbw.consoleconnect.server;
 
 import de.dhbw.consoleconnect.server.account.AccountManager;
 import de.dhbw.consoleconnect.server.command.CommandManager;
-import de.dhbw.consoleconnect.server.database.DatabaseManager;
+import de.dhbw.consoleconnect.server.database.DatabaseService;
+import de.dhbw.consoleconnect.server.database.h2.H2Database;
+import de.dhbw.consoleconnect.server.database.h2.H2DatabaseService;
 import de.dhbw.consoleconnect.server.game.GameManager;
 import de.dhbw.consoleconnect.server.room.Room;
 import de.dhbw.consoleconnect.server.room.RoomManager;
@@ -16,7 +18,7 @@ import java.util.Map;
 
 public class Server {
 
-    private final DatabaseManager databaseManager;
+    private final DatabaseService<H2Database> databaseService;
     private final AccountManager accountManager;
     private final CommandManager commandManager;
     private final RoomManager roomManager;
@@ -24,7 +26,7 @@ public class Server {
     private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
 
     public Server() {
-        this.databaseManager = new DatabaseManager();
+        this.databaseService = new H2DatabaseService();
         this.accountManager = new AccountManager(this);
         this.commandManager = new CommandManager(this);
         this.roomManager = new RoomManager(this);
@@ -96,8 +98,8 @@ public class Server {
         return false;
     }
 
-    public DatabaseManager getDatabaseManager() {
-        return this.databaseManager;
+    public DatabaseService<H2Database> getDatabaseService() {
+        return this.databaseService;
     }
 
     public AccountManager getAccountManager() {
