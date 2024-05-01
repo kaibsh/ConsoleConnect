@@ -30,17 +30,7 @@ public class H2AccountRepository extends H2Database implements AccountRepository
     public final Account getAccountById(final int accountId) {
         try (final PreparedStatement preparedStatement = this.getType().prepareStatement("SELECT * FROM accounts WHERE id = ?")) {
             preparedStatement.setInt(1, accountId);
-            preparedStatement.execute();
-            try (final ResultSet resultSet = preparedStatement.getResultSet()) {
-                if (resultSet.next()) {
-                    final Account account = new Account();
-                    account.setId(resultSet.getInt("id"));
-                    account.setName(resultSet.getString("name"));
-                    account.setPassword(resultSet.getString("password"));
-                    account.setStatus(resultSet.getString("status"));
-                    return account;
-                }
-            }
+            return this.getAccount(preparedStatement);
         } catch (final SQLException exception) {
             exception.printStackTrace();
         }
@@ -52,19 +42,24 @@ public class H2AccountRepository extends H2Database implements AccountRepository
         if (accountName != null && !accountName.isBlank()) {
             try (final PreparedStatement preparedStatement = this.getType().prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
                 preparedStatement.setString(1, accountName.toLowerCase());
-                preparedStatement.execute();
-                try (final ResultSet resultSet = preparedStatement.getResultSet()) {
-                    if (resultSet.next()) {
-                        final Account account = new Account();
-                        account.setId(resultSet.getInt("id"));
-                        account.setName(resultSet.getString("name"));
-                        account.setPassword(resultSet.getString("password"));
-                        account.setStatus(resultSet.getString("status"));
-                        return account;
-                    }
-                }
+                return this.getAccount(preparedStatement);
             } catch (final SQLException exception) {
                 exception.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private Account getAccount(final PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.execute();
+        try (final ResultSet resultSet = preparedStatement.getResultSet()) {
+            if (resultSet.next()) {
+                final Account account = new Account();
+                account.setId(resultSet.getInt("id"));
+                account.setName(resultSet.getString("name"));
+                account.setPassword(resultSet.getString("password"));
+                account.setStatus(resultSet.getString("status"));
+                return account;
             }
         }
         return null;
