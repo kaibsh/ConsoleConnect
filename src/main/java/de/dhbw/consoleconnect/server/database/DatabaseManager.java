@@ -1,7 +1,5 @@
 package de.dhbw.consoleconnect.server.database;
 
-import de.dhbw.consoleconnect.server.Server;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,12 +8,10 @@ import java.util.List;
 
 public class DatabaseManager {
 
-    private final Server server;
     private final List<Database> databases = new LinkedList<>();
     private Connection connection;
 
-    public DatabaseManager(final Server server) {
-        this.server = server;
+    public DatabaseManager() {
         this.connect();
     }
 

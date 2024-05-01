@@ -24,7 +24,7 @@ public class Server {
     private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
 
     public Server() {
-        this.databaseManager = new DatabaseManager(this);
+        this.databaseManager = new DatabaseManager();
         this.accountManager = new AccountManager(this);
         this.commandManager = new CommandManager(this);
         this.roomManager = new RoomManager(this);
