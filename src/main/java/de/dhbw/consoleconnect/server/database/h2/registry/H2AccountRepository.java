@@ -1,6 +1,7 @@
 package de.dhbw.consoleconnect.server.database.h2.registry;
 
 import de.dhbw.consoleconnect.server.account.Account;
+import de.dhbw.consoleconnect.server.account.AdminAccount;
 import de.dhbw.consoleconnect.server.database.h2.H2Database;
 import de.dhbw.consoleconnect.server.database.repositories.AccountRepository;
 
@@ -54,7 +55,12 @@ public class H2AccountRepository extends H2Database implements AccountRepository
         preparedStatement.execute();
         try (final ResultSet resultSet = preparedStatement.getResultSet()) {
             if (resultSet.next()) {
-                final Account account = new Account();
+                Account account = null;
+                if (resultSet.getString("name").equalsIgnoreCase("*** Admin ***")) {
+                    account = new AdminAccount();
+                } else {
+                    account = new Account();
+                }
                 account.setId(resultSet.getInt("id"));
                 account.setName(resultSet.getString("name"));
                 account.setPassword(resultSet.getString("password"));

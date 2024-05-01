@@ -65,11 +65,11 @@ public abstract class Game {
 
     protected abstract void handleInput(final Server server, final ServerClient client, final String input);
 
-    public UUID getId() {
+    public final UUID getId() {
         return this.id;
     }
 
-    public GameMode getGameMode() {
+    public final GameMode getGameMode() {
         return this.gameMode;
     }
 
@@ -77,11 +77,11 @@ public abstract class Game {
         return this.room;
     }
 
-    public Instant getStartTime() {
+    public final Instant getStartTime() {
         return this.startTime;
     }
 
-    public Instant getEndTime() {
+    public final Instant getEndTime() {
         return this.endTime;
     }
 
@@ -92,11 +92,11 @@ public abstract class Game {
         return Duration.ZERO;
     }
 
-    public ServerClient getWinner() {
+    public final ServerClient getWinner() {
         return this.winner;
     }
 
-    protected void setWinner(final ServerClient winner) {
+    protected final void setWinner(final ServerClient winner) {
         this.winner = winner;
     }
 
