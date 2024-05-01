@@ -9,7 +9,7 @@ import de.dhbw.consoleconnect.server.game.GameMode;
 import java.sql.*;
 import java.util.*;
 
-public class GameHistoryRepositoryH2Database extends H2Database implements GameHistoryRepository {
+public class H2GameHistoryRepository extends H2Database implements GameHistoryRepository {
 
     @Override
     protected final void createTables() {

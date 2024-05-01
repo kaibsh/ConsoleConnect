@@ -4,8 +4,10 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.database.h2.H2Database;
-import de.dhbw.consoleconnect.server.database.h2.registry.GameHistoryRepositoryH2Database;
+import de.dhbw.consoleconnect.server.database.h2.registry.H2GameHistoryRepository;
 import de.dhbw.consoleconnect.server.database.repositories.GameHistoryRepository;
+import de.dhbw.consoleconnect.server.game.registry.RockPaperScissorGame;
+import de.dhbw.consoleconnect.server.game.registry.TicTacToeGame;
 import de.dhbw.consoleconnect.server.room.Room;
 
 import java.util.*;
@@ -19,8 +21,20 @@ public class GameManager {
 
     public GameManager(final Server server) {
         this.server = server;
-        this.gameHistoryRepository = new GameHistoryRepositoryH2Database();
+        this.gameHistoryRepository = new H2GameHistoryRepository();
         this.server.getDatabaseService().registerDatabase((H2Database) this.gameHistoryRepository);
+    }
+
+    private Game resolve(final GameMode gameMode) {
+        final Game game;
+        if (gameMode.equals(GameMode.ROCK_PAPER_SCISSOR)) {
+            game = new RockPaperScissorGame();
+        } else if (gameMode.equals(GameMode.TIC_TAC_TOE)) {
+            game = new TicTacToeGame();
+        } else {
+            throw new IllegalArgumentException("Unsupported game mode: " + gameMode.name());
+        }
+        return game;
     }
 
     public void startGame(final GameRequest gameRequest) {
@@ -28,7 +42,7 @@ public class GameManager {
             this.gameRequests.remove(gameRequest);
             this.removeAllGameRequests(gameRequest.getSender());
             this.removeAllGameRequests(gameRequest.getReceiver());
-            final Game game = gameRequest.resolve();
+            final Game game = this.resolve(gameRequest.getGameMode());
             this.server.getRoomManager().addRoom(game.getRoom(), gameRequest.getSender(), gameRequest.getReceiver());
             this.games.add(game);
             game.start();
@@ -150,28 +164,6 @@ public class GameManager {
         }
     }
 
-    public List<GameHistory> getGameHistories(final Account account) {
-        final List<GameHistory> gameHistories = new ArrayList<>();
-        if (account != null) {
-            final List<UUID> gameHistoryIDs = this.gameHistoryRepository.getGameHistoryIDs(account);
-            for (final UUID gameId : gameHistoryIDs) {
-                final GameHistory gameHistory = this.gameHistoryRepository.getGameHistory(gameId);
-                if (gameHistory != null) {
-                    final Map<Integer, Boolean> players = this.gameHistoryRepository.getGameHistoryPlayers(gameId);
-                    for (final Map.Entry<Integer, Boolean> player : players.entrySet()) {
-                        final Account playerAccount = this.server.getAccountManager().getAccountById(player.getKey());
-                        if (playerAccount != null) {
-                            gameHistory.getPlayers().put(playerAccount, player.getValue());
-                        }
-                    }
-                    gameHistories.add(gameHistory);
-                }
-            }
-
-        }
-        return gameHistories;
-    }
-
     public boolean isInGame(final ServerClient client) {
         for (final Game game : this.games) {
             if (game.getRoom().getClients().contains(client)) {
@@ -254,5 +246,27 @@ public class GameManager {
             }
         }
         return false;
+    }
+
+    public List<GameHistory> getGameHistories(final Account account) {
+        final List<GameHistory> gameHistories = new ArrayList<>();
+        if (account != null) {
+            final List<UUID> gameHistoryIDs = this.gameHistoryRepository.getGameHistoryIDs(account);
+            for (final UUID gameId : gameHistoryIDs) {
+                final GameHistory gameHistory = this.gameHistoryRepository.getGameHistory(gameId);
+                if (gameHistory != null) {
+                    final Map<Integer, Boolean> players = this.gameHistoryRepository.getGameHistoryPlayers(gameId);
+                    for (final Map.Entry<Integer, Boolean> player : players.entrySet()) {
+                        final Account playerAccount = this.server.getAccountManager().getAccountById(player.getKey());
+                        if (playerAccount != null) {
+                            gameHistory.getPlayers().put(playerAccount, player.getValue());
+                        }
+                    }
+                    gameHistories.add(gameHistory);
+                }
+            }
+
+        }
+        return gameHistories;
     }
 }

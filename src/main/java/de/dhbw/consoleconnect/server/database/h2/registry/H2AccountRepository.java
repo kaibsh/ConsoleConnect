@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class AccountRepositoryH2Database extends H2Database implements AccountRepository {
+public class H2AccountRepository extends H2Database implements AccountRepository {
 
     @Override
     protected final void createTables() {
