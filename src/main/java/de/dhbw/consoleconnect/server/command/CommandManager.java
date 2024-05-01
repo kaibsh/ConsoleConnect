@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.command;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.registry.*;
 
 import java.util.LinkedHashMap;
@@ -53,7 +53,7 @@ public class CommandManager {
         this.commands.put(statusCommand.getName(), statusCommand);
     }
 
-    public void handleCommand(final ServerClientThread client, final String commandLine) {
+    public void handleCommand(final ServerClient client, final String commandLine) {
         final String[] splittedCommand = commandLine.split(" ");
         final String commandName = splittedCommand[0];
         final Command command = this.commands.get(commandName);

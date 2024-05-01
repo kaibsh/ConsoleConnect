@@ -23,7 +23,7 @@ public class Server {
     private final CommandManager commandManager;
     private final RoomManager roomManager;
     private final GameManager gameManager;
-    private final Map<String, ServerClientThread> clients = new LinkedHashMap<>();
+    private final Map<String, ServerClient> clients = new LinkedHashMap<>();
 
     public Server() {
         this.databaseService = new H2DatabaseService();
@@ -47,10 +47,10 @@ public class Server {
         }
     }
 
-    public void broadcastMessage(final ServerClientThread client, final String message) {
+    public void broadcastMessage(final ServerClient client, final String message) {
         if (message != null && !message.isBlank()) {
             if (client.getRoomName().equalsIgnoreCase("GLOBAL")) {
-                for (final ServerClientThread receiverClient : this.clients.values()) {
+                for (final ServerClient receiverClient : this.clients.values()) {
                     if (client.getRoomName().equalsIgnoreCase(receiverClient.getRoomName())) {
                         receiverClient.sendMessage(message);
                     }
@@ -64,9 +64,9 @@ public class Server {
         }
     }
 
-    public ServerClientThread getClient(final String clientName) {
+    public ServerClient getClient(final String clientName) {
         if (clientName != null && !clientName.isBlank()) {
-            for (final Map.Entry<String, ServerClientThread> mapEntry : this.clients.entrySet()) {
+            for (final Map.Entry<String, ServerClient> mapEntry : this.clients.entrySet()) {
                 if (mapEntry.getKey().equalsIgnoreCase(clientName)) {
                     return mapEntry.getValue();
                 }
@@ -75,13 +75,13 @@ public class Server {
         return null;
     }
 
-    public void addClient(final ServerClientThread client) {
+    public void addClient(final ServerClient client) {
         if (client != null) {
             this.clients.put(client.getName(), client);
         }
     }
 
-    public void removeClient(final ServerClientThread client) {
+    public void removeClient(final ServerClient client) {
         if (client != null && this.clients.containsValue(client)) {
             this.clients.remove(client.getName());
         }
@@ -118,7 +118,7 @@ public class Server {
         return this.gameManager;
     }
 
-    public List<ServerClientThread> getClients() {
+    public List<ServerClient> getClients() {
         return List.copyOf(this.clients.values());
     }
 }

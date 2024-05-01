@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.command;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 
 public abstract class Command {
 
@@ -13,7 +13,7 @@ public abstract class Command {
         this.description = description;
     }
 
-    protected abstract void execute(final Server server, final ServerClientThread client, final String[] arguments);
+    protected abstract void execute(final Server server, final ServerClient client, final String[] arguments);
 
     public final String getName() {
         return this.name;

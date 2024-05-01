@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.command.registry;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
 
@@ -12,7 +12,7 @@ public class AccountCommand extends Command {
     }
 
     @Override
-    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
+    protected void execute(final Server server, final ServerClient client, final String[] arguments) {
         if (arguments == null) {
             client.sendMessage("[AccountCommand] Use '/account help' for more information.");
         } else if (arguments.length == 1) {
