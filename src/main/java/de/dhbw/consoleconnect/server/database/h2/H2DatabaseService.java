@@ -11,15 +11,9 @@ public class H2DatabaseService implements DatabaseService<H2Database> {
     private Connection connection;
 
     public H2DatabaseService() {
-        this.connect();
-    }
-
-    private void connect() {
         try {
-            if (this.connection == null || this.connection.isClosed()) {
-                this.connection = DriverManager.getConnection("jdbc:h2:./build/database");
-                System.out.println("[DATABASE] Successfully connected to database!");
-            }
+            this.connection = DriverManager.getConnection("jdbc:h2:./build/database");
+            System.out.println("[DATABASE] Successfully connected to database!");
         } catch (final SQLException exception) {
             exception.printStackTrace();
         }

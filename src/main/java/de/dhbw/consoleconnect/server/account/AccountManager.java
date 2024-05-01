@@ -2,7 +2,7 @@ package de.dhbw.consoleconnect.server.account;
 
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.database.h2.H2Database;
-import de.dhbw.consoleconnect.server.database.h2.registry.AccountRepositoryH2Database;
+import de.dhbw.consoleconnect.server.database.h2.registry.H2AccountRepository;
 import de.dhbw.consoleconnect.server.database.repositories.AccountRepository;
 
 public class AccountManager {
@@ -12,7 +12,7 @@ public class AccountManager {
 
     public AccountManager(final Server server) {
         this.server = server;
-        this.accountRepository = new AccountRepositoryH2Database();
+        this.accountRepository = new H2AccountRepository();
         this.server.getDatabaseService().registerDatabase((H2Database) this.accountRepository);
     }
 
