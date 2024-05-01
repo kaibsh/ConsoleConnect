@@ -1,16 +1,16 @@
 package de.dhbw.consoleconnect.server.game;
 
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.game.registry.RockPaperScissorGame;
 import de.dhbw.consoleconnect.server.game.registry.TicTacToeGame;
 
 public class GameRequest {
 
     private final GameMode gameMode;
-    private final ServerClientThread sender;
-    private final ServerClientThread receiver;
+    private final ServerClient sender;
+    private final ServerClient receiver;
 
-    protected GameRequest(final GameMode gameMode, final ServerClientThread sender, final ServerClientThread receiver) {
+    protected GameRequest(final GameMode gameMode, final ServerClient sender, final ServerClient receiver) {
         this.gameMode = gameMode;
         this.sender = sender;
         this.receiver = receiver;
@@ -32,11 +32,11 @@ public class GameRequest {
         return this.gameMode;
     }
 
-    public ServerClientThread getSender() {
+    public ServerClient getSender() {
         return this.sender;
     }
 
-    public ServerClientThread getReceiver() {
+    public ServerClient getReceiver() {
         return this.receiver;
     }
 }

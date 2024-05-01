@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.game;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.room.Room;
 
 import java.time.Duration;
@@ -15,7 +15,7 @@ public abstract class Game {
     private final Room room;
     private Instant startTime;
     private Instant endTime;
-    private ServerClientThread winner;
+    private ServerClient winner;
     private boolean running = false;
 
     protected Game(final GameMode gameMode) {
@@ -41,21 +41,21 @@ public abstract class Game {
         }
     }
 
-    protected final void broadcast(final String message, final ServerClientThread... clients) {
+    protected final void broadcast(final String message, final ServerClient... clients) {
         if (message != null && !message.isBlank()) {
             if (clients != null && clients.length > 0) {
-                for (final ServerClientThread client : clients) {
+                for (final ServerClient client : clients) {
                     client.sendMessage(message);
                 }
             } else {
-                for (final ServerClientThread client : this.getRoom().getClients()) {
+                for (final ServerClient client : this.getRoom().getClients()) {
                     client.sendMessage(message);
                 }
             }
         }
     }
 
-    protected final void clear(final ServerClientThread... clients) {
+    protected final void clear(final ServerClient... clients) {
         if (clients != null) {
             this.broadcast("[HOOK] CLEAR", clients);
         }
@@ -63,7 +63,7 @@ public abstract class Game {
 
     protected abstract void initialize();
 
-    protected abstract void handleInput(final Server server, final ServerClientThread client, final String input);
+    protected abstract void handleInput(final Server server, final ServerClient client, final String input);
 
     public UUID getId() {
         return this.id;
@@ -92,11 +92,11 @@ public abstract class Game {
         return Duration.ZERO;
     }
 
-    public ServerClientThread getWinner() {
+    public ServerClient getWinner() {
         return this.winner;
     }
 
-    protected void setWinner(final ServerClientThread winner) {
+    protected void setWinner(final ServerClient winner) {
         this.winner = winner;
     }
 

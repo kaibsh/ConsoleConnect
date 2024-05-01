@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.command.registry;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 
 public class HelpCommand extends Command {
@@ -11,7 +11,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
+    protected void execute(final Server server, final ServerClient client, final String[] arguments) {
         if (arguments == null) {
             final StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("[HelpCommand] Available commands:").append("\n");

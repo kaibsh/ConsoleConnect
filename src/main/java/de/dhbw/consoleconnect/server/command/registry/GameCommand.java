@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.command.registry;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
 import de.dhbw.consoleconnect.server.game.GameHistory;
@@ -24,7 +24,7 @@ public class GameCommand extends Command {
     }
 
     @Override
-    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
+    protected void execute(final Server server, final ServerClient client, final String[] arguments) {
         if (arguments == null) {
             client.sendMessage("[GameCommand] Use '/game help' for more information.");
         } else if (arguments.length == 1) {
@@ -84,7 +84,7 @@ public class GameCommand extends Command {
                 final String receiverClientName = arguments[1];
                 if (!receiverClientName.isBlank()) {
                     if (!client.getName().equalsIgnoreCase(receiverClientName)) {
-                        final ServerClientThread receiverClient = server.getClient(receiverClientName);
+                        final ServerClient receiverClient = server.getClient(receiverClientName);
                         if (receiverClient != null) {
                             if (server.getGameManager().isSendedGameRequestExistent(client, receiverClient)) {
                                 server.getGameManager().cancelGameRequest(client, receiverClient, false);
@@ -104,7 +104,7 @@ public class GameCommand extends Command {
                 final String senderClientName = arguments[1];
                 if (!senderClientName.isBlank()) {
                     if (!client.getName().equalsIgnoreCase(senderClientName)) {
-                        final ServerClientThread senderClient = server.getClient(senderClientName);
+                        final ServerClient senderClient = server.getClient(senderClientName);
                         if (senderClient != null) {
                             if (server.getGameManager().isReceivedGameRequestExistent(client, senderClient)) {
                                 server.getGameManager().acceptGameRequest(client, senderClient);
@@ -124,7 +124,7 @@ public class GameCommand extends Command {
                 final String senderClientName = arguments[1];
                 if (!senderClientName.isBlank()) {
                     if (!client.getName().equalsIgnoreCase(senderClientName)) {
-                        final ServerClientThread senderClient = server.getClient(senderClientName);
+                        final ServerClient senderClient = server.getClient(senderClientName);
                         if (senderClient != null) {
                             if (server.getGameManager().isReceivedGameRequestExistent(client, senderClient)) {
                                 server.getGameManager().denyGameRequest(client, senderClient, false);
@@ -181,7 +181,7 @@ public class GameCommand extends Command {
                         final String receiverClientName = arguments[2];
                         if (!receiverClientName.isBlank()) {
                             if (!client.getName().equalsIgnoreCase(receiverClientName)) {
-                                final ServerClientThread receiverClient = server.getClient(receiverClientName);
+                                final ServerClient receiverClient = server.getClient(receiverClientName);
                                 if (receiverClient != null) {
                                     if (!server.getGameManager().isInGame(receiverClient)) {
                                         if (!server.getGameManager().isSendedGameRequestExistent(client, receiverClient)) {

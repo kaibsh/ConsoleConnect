@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.game.registry;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.game.Game;
 import de.dhbw.consoleconnect.server.game.GameMode;
 
@@ -11,8 +11,8 @@ public class TicTacToeGame extends Game {
 
     private static final int[][] WIN_CHANCES = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
     private final char[] board = new char[9];
-    private ServerClientThread crossPlayer;
-    private ServerClientThread circlePlayer;
+    private ServerClient crossPlayer;
+    private ServerClient circlePlayer;
     private Symbol currentPlayer = Symbol.CROSS;
 
     public TicTacToeGame() {
@@ -37,7 +37,7 @@ public class TicTacToeGame extends Game {
     }
 
     @Override
-    protected void handleInput(final Server server, final ServerClientThread client, final String input) {
+    protected void handleInput(final Server server, final ServerClient client, final String input) {
         if (client != null && input != null && !input.isBlank()) {
             if (client == this.crossPlayer || client == this.circlePlayer) {
                 if (this.handleTurn(client, input)) {
@@ -59,7 +59,7 @@ public class TicTacToeGame extends Game {
         }
     }
 
-    private boolean handleTurn(final ServerClientThread client, final String input) {
+    private boolean handleTurn(final ServerClient client, final String input) {
         if (client != null && input != null && !input.isBlank()) {
             if ((client == this.crossPlayer && this.currentPlayer == Symbol.CROSS) || (client == this.circlePlayer && this.currentPlayer == Symbol.CIRCLE)) {
                 final int position = this.parseInput(input);
@@ -83,7 +83,7 @@ public class TicTacToeGame extends Game {
         return false;
     }
 
-    private void renderBoard(final ServerClientThread... clients) {
+    private void renderBoard(final ServerClient... clients) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" --- --- ---\n");
         int counter = 0;
@@ -140,7 +140,7 @@ public class TicTacToeGame extends Game {
         return counter == 9;
     }
 
-    private ServerClientThread getCurrentClient() {
+    private ServerClient getCurrentClient() {
         if (this.currentPlayer == Symbol.CROSS) {
             return this.crossPlayer;
         }

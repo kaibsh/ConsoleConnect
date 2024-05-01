@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.command.registry;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 import de.dhbw.consoleconnect.server.room.Room;
 
@@ -12,7 +12,7 @@ public class RoomCommand extends Command {
     }
 
     @Override
-    protected void execute(final Server server, final ServerClientThread client, final String[] arguments) {
+    protected void execute(final Server server, final ServerClient client, final String[] arguments) {
         if (arguments == null) {
             client.sendMessage("[RoomCommand] Use '/room help' for more information.");
         } else if (arguments.length == 1) {
@@ -56,7 +56,7 @@ public class RoomCommand extends Command {
                     for (final Room room : server.getRoomManager().getRooms()) {
                         if (!room.isGame()) {
                             final StringBuilder stringBuilder = new StringBuilder();
-                            for (final ServerClientThread clients : room.getClients()) {
+                            for (final ServerClient clients : room.getClients()) {
                                 stringBuilder.append(clients.getName()).append(", ");
                             }
                             stringBuilder.setLength(stringBuilder.length() - 2);

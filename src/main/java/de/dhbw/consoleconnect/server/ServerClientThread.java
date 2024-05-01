@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ServerClientThread extends Thread {
+public class ServerClientThread extends Thread implements ServerClient {
 
     private final Server server;
     private final Socket socket;
@@ -94,30 +94,18 @@ public class ServerClientThread extends Thread {
         }
     }
 
-    public void sendMessage(final String message) {
-        if (message != null && !message.isBlank()) {
-            this.printWriter.println(message);
-        }
-    }
-
-    public void sendPrivateMessage(final ServerClientThread client, final String message) {
-        if (client != null && message != null && !message.isBlank()) {
-            this.sendMessage("[" + client.getName() + "] -->: " + message);
-            client.sendMessage("[" + this.getName() + "] <--: " + message);
-            client.setReply(this.getName());
-        }
-    }
-
+    @Override
     public void connectClient() {
         this.connected = true;
         this.server.addClient(this);
         this.server.broadcastMessage(this, "-> " + this.getName() + " has connected to the chat-server!");
     }
 
+    @Override
     public void disconnectClient() {
         this.server.broadcastMessage(this, "<- " + this.getName() + " has disconnected from the chat-server!");
         this.server.getGameManager().removeAllGameRequests(this);
-        for (final ServerClientThread client : this.server.getClients()) {
+        for (final ServerClient client : this.server.getClients()) {
             if (client.getReply().equalsIgnoreCase(this.getName())) {
                 client.setReply("");
             }
@@ -137,20 +125,40 @@ public class ServerClientThread extends Thread {
         }
     }
 
+    @Override
+    public void sendMessage(final String message) {
+        if (message != null && !message.isBlank()) {
+            this.printWriter.println(message);
+        }
+    }
+
+    @Override
+    public void sendPrivateMessage(final ServerClient client, final String message) {
+        if (client != null && message != null && !message.isBlank()) {
+            this.sendMessage("[" + client.getName() + "] -->: " + message);
+            client.sendMessage("[" + this.getName() + "] <--: " + message);
+            client.setReply(this.getName());
+        }
+    }
+
+    @Override
     public String getRoomName() {
         return this.roomName;
     }
 
+    @Override
     public void setRoomName(final String roomName) {
         if (roomName != null && !roomName.isBlank()) {
             this.roomName = roomName;
         }
     }
 
+    @Override
     public String getReply() {
         return this.reply;
     }
 
+    @Override
     public void setReply(final String reply) {
         if (reply != null && !reply.isBlank()) {
             this.reply = reply;

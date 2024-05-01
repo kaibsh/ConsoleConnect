@@ -1,7 +1,7 @@
 package de.dhbw.consoleconnect.server.game.registry;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.ServerClientThread;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.game.Game;
 import de.dhbw.consoleconnect.server.game.GameMode;
 
@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class RockPaperScissorGame extends Game {
 
-    private Map.Entry<ServerClientThread, Selection> firstPlayerSelection;
-    private Map.Entry<ServerClientThread, Selection> secondPlayerSelection;
+    private Map.Entry<ServerClient, Selection> firstPlayerSelection;
+    private Map.Entry<ServerClient, Selection> secondPlayerSelection;
 
     public RockPaperScissorGame() {
         super(GameMode.ROCK_PAPER_SCISSOR);
@@ -23,7 +23,7 @@ public class RockPaperScissorGame extends Game {
     }
 
     @Override
-    protected void handleInput(final Server server, final ServerClientThread client, final String input) {
+    protected void handleInput(final Server server, final ServerClient client, final String input) {
         if (client != null && input != null && !input.isBlank()) {
             if ((this.firstPlayerSelection != null && this.firstPlayerSelection.getKey() == client) || (this.secondPlayerSelection != null && this.secondPlayerSelection.getKey() == client)) {
                 client.sendMessage("You already made your selection!");
@@ -31,7 +31,7 @@ public class RockPaperScissorGame extends Game {
             }
             final Selection selection = Selection.fromString(input);
             if (selection != null) {
-                final Map.Entry<ServerClientThread, Selection> playerSelection = Map.entry(client, selection);
+                final Map.Entry<ServerClient, Selection> playerSelection = Map.entry(client, selection);
                 if (this.firstPlayerSelection == null) {
                     this.firstPlayerSelection = playerSelection;
                     client.sendMessage("You selected: " + selection.name());

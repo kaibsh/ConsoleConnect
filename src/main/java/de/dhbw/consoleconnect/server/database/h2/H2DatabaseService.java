@@ -1,21 +1,16 @@
-package de.dhbw.consoleconnect.server.database;
+package de.dhbw.consoleconnect.server.database.h2;
 
-import de.dhbw.consoleconnect.server.Server;
+import de.dhbw.consoleconnect.server.database.DatabaseService;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
-public class DatabaseManager {
+public class H2DatabaseService implements DatabaseService<H2Database> {
 
-    private final Server server;
-    private final List<Database> databases = new LinkedList<>();
     private Connection connection;
 
-    public DatabaseManager(final Server server) {
-        this.server = server;
+    public H2DatabaseService() {
         this.connect();
     }
 
@@ -30,14 +25,12 @@ public class DatabaseManager {
         }
     }
 
-    public void registerDatabase(final Database database) {
+    @Override
+    public final void registerDatabase(final H2Database h2Database) {
         try {
             if (this.connection != null && !this.connection.isClosed()) {
-                if (!this.databases.contains(database)) {
-                    database.initialize(this.connection);
-                    this.databases.add(database);
-                    System.out.println("[DATABASE] Successfully initialized database: " + database.getClass().getSimpleName());
-                }
+                h2Database.initialize(this.connection);
+                System.out.println("[DATABASE] Successfully initialized database: " + h2Database.getClass().getSimpleName());
             }
         } catch (final SQLException exception) {
             exception.printStackTrace();
