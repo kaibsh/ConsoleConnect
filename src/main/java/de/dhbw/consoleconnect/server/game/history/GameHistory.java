@@ -1,6 +1,7 @@
-package de.dhbw.consoleconnect.server.game;
+package de.dhbw.consoleconnect.server.game.history;
 
 import de.dhbw.consoleconnect.server.account.Account;
+import de.dhbw.consoleconnect.server.game.GameMode;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -19,7 +20,7 @@ public final class GameHistory {
         return this.id;
     }
 
-    public void setId(final UUID id) {
+    void setId(final UUID id) {
         if (id != null) {
             this.id = id;
         }
@@ -29,7 +30,7 @@ public final class GameHistory {
         return this.startTime;
     }
 
-    public void setStartTime(final Instant startTime) {
+    void setStartTime(final Instant startTime) {
         if (startTime != null) {
             this.startTime = startTime;
         }
@@ -39,7 +40,7 @@ public final class GameHistory {
         return this.endTime;
     }
 
-    public void setEndTime(final Instant endTime) {
+    void setEndTime(final Instant endTime) {
         if (endTime != null) {
             this.endTime = endTime;
         }
@@ -56,7 +57,7 @@ public final class GameHistory {
         return this.gameMode;
     }
 
-    public void setGameMode(final GameMode gameMode) {
+    void setGameMode(final GameMode gameMode) {
         if (gameMode != null) {
             this.gameMode = gameMode;
         }
@@ -66,7 +67,7 @@ public final class GameHistory {
         return this.draw;
     }
 
-    public void setDraw(final boolean draw) {
+    void setDraw(final boolean draw) {
         this.draw = draw;
     }
 

@@ -109,7 +109,7 @@ public final class RoomManager {
         return null;
     }
 
-    public int calculateBasicRooms() {
+    public int getNonGameRoomAmount() {
         int gameRooms = 0;
         for (final Room room : this.rooms) {
             if (room.isGame()) {

@@ -4,9 +4,9 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
-import de.dhbw.consoleconnect.server.game.GameHistory;
 import de.dhbw.consoleconnect.server.game.GameMode;
 import de.dhbw.consoleconnect.server.game.GameRequest;
+import de.dhbw.consoleconnect.server.game.history.GameHistory;
 
 import java.util.LinkedHashMap;
 import java.util.List;

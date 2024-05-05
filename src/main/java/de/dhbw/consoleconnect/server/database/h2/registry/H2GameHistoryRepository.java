@@ -2,8 +2,9 @@ package de.dhbw.consoleconnect.server.database.h2.registry;
 
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.database.repositories.GameHistoryRepository;
-import de.dhbw.consoleconnect.server.game.GameHistory;
 import de.dhbw.consoleconnect.server.game.GameMode;
+import de.dhbw.consoleconnect.server.game.history.GameHistory;
+import de.dhbw.consoleconnect.server.game.history.GameHistoryBuilder;
 
 import java.sql.*;
 import java.util.*;
@@ -49,12 +50,13 @@ public final class H2GameHistoryRepository implements GameHistoryRepository<Conn
             preparedStatement.execute();
             try (final ResultSet resultSet = preparedStatement.getResultSet()) {
                 if (resultSet.next()) {
-                    final GameHistory gameHistory = new GameHistory();
-                    gameHistory.setId(UUID.fromString(resultSet.getString("id")));
-                    gameHistory.setStartTime(resultSet.getTimestamp("start_time").toInstant());
-                    gameHistory.setEndTime(resultSet.getTimestamp("end_time").toInstant());
-                    gameHistory.setGameMode(GameMode.valueOf(resultSet.getString("game_mode")));
-                    gameHistory.setDraw(resultSet.getBoolean("draw"));
+                    final GameHistory gameHistory = new GameHistoryBuilder()
+                            .setId(UUID.fromString(resultSet.getString("id")))
+                            .setStartTime(resultSet.getTimestamp("start_time").toInstant())
+                            .setEndTime(resultSet.getTimestamp("end_time").toInstant())
+                            .setGameMode(GameMode.valueOf(resultSet.getString("game_mode")))
+                            .setDraw(resultSet.getBoolean("draw"))
+                            .build();
                     return gameHistory;
                 }
             }

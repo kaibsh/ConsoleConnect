@@ -51,7 +51,7 @@ public final class RoomCommand extends Command {
                     client.sendMessage("[RoomCommand] You are already in the global chat-room!");
                 }
             } else if (arguments[0].equalsIgnoreCase("list")) {
-                if (!server.getRoomManager().getRooms().isEmpty() && server.getRoomManager().calculateBasicRooms() > 0) {
+                if (!server.getRoomManager().getRooms().isEmpty() && server.getRoomManager().getNonGameRoomAmount() > 0) {
                     client.sendMessage("[RoomCommand] Available rooms:");
                     for (final Room room : server.getRoomManager().getRooms()) {
                         if (!room.isGame()) {

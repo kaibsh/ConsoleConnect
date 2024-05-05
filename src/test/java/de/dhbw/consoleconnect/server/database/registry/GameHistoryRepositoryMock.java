@@ -2,7 +2,7 @@ package de.dhbw.consoleconnect.server.database.registry;
 
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.database.repositories.GameHistoryRepository;
-import de.dhbw.consoleconnect.server.game.GameHistory;
+import de.dhbw.consoleconnect.server.game.history.GameHistory;
 
 import java.util.*;
 

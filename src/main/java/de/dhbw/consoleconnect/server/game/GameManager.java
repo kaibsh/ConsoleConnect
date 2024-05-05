@@ -4,6 +4,8 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.database.repositories.GameHistoryRepository;
+import de.dhbw.consoleconnect.server.game.history.GameHistory;
+import de.dhbw.consoleconnect.server.game.history.GameHistoryBuilder;
 import de.dhbw.consoleconnect.server.game.registry.RockPaperScissorGame;
 import de.dhbw.consoleconnect.server.game.registry.TicTacToeGame;
 import de.dhbw.consoleconnect.server.room.Room;
@@ -51,23 +53,7 @@ public final class GameManager {
     public void stopGame(final Game game) {
         if (game != null && this.games.contains(game)) {
             game.stop();
-
-            //START: GameHistory
-            final GameHistory gameHistory = new GameHistory();
-            gameHistory.setId(game.getId());
-            gameHistory.setGameMode(game.getGameMode());
-            gameHistory.setStartTime(game.getStartTime());
-            gameHistory.setEndTime(game.getEndTime());
-            gameHistory.setDraw(game.getWinner() == null);
-            for (final ServerClient client : game.getRoom().getClients()) {
-                final Account account = this.server.getAccountManager().getAccountByName(client.getName());
-                if (account != null) {
-                    gameHistory.getPlayers().put(account, (game.getWinner() != null && game.getWinner() == client));
-                }
-            }
-            this.gameHistoryRepository.saveGameHistory(gameHistory);
-            //END: GameHistory
-
+            this.saveGameHistory(game);
             this.games.remove(game);
             this.server.getRoomManager().removeRoom(game.getRoom());
             System.out.println("[GAME] Game '" + game.getRoom().getName() + "' has been stopped.");
@@ -178,6 +164,25 @@ public final class GameManager {
             }
         }
         return null;
+    }
+
+    private void saveGameHistory(final Game game) {
+        final Map<Account, Boolean> players = new HashMap<>();
+        for (final ServerClient client : game.getRoom().getClients()) {
+            final Account account = this.server.getAccountManager().getAccountByName(client.getName());
+            if (account != null) {
+                players.put(account, (game.getWinner() != null && game.getWinner() == client));
+            }
+        }
+        final GameHistory gameHistory = new GameHistoryBuilder()
+                .setId(game.getId())
+                .setGameMode(game.getGameMode())
+                .setStartTime(game.getStartTime())
+                .setEndTime(game.getEndTime())
+                .setDraw(game.getWinner() == null)
+                .addPlayers(players)
+                .build();
+        this.gameHistoryRepository.saveGameHistory(gameHistory);
     }
 
     public GameRequest getGameRequest(final ServerClient senderClient, final ServerClient receiverClient) {
