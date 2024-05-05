@@ -4,7 +4,7 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 
-public class StatusCommand extends Command {
+public final class StatusCommand extends Command {
 
     public StatusCommand() {
         super("status", "Change your status.");

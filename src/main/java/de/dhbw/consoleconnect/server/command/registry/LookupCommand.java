@@ -5,7 +5,7 @@ import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
 
-public class LookupCommand extends Command {
+public final class LookupCommand extends Command {
 
     public LookupCommand() {
         super("lookup", "Lookup a user.");

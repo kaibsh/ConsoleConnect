@@ -4,7 +4,7 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 
-public class MessageCommand extends Command {
+public final class MessageCommand extends Command {
 
     public MessageCommand() {
         super("message", "Sends a message to a specific client.");

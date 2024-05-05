@@ -6,7 +6,7 @@ import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
 import de.dhbw.consoleconnect.server.room.Room;
 
-public class ListCommand extends Command {
+public final class ListCommand extends Command {
 
     public ListCommand() {
         super("list", "Lists all connected clients.");

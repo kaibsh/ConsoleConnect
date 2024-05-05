@@ -1,6 +1,6 @@
 package de.dhbw.consoleconnect.server.account;
 
-public class AdminAccount extends Account {
+public final class AdminAccount extends Account {
 
     @Override
     public String getName() {

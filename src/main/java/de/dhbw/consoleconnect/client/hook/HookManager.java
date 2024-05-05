@@ -9,7 +9,7 @@ import de.dhbw.consoleconnect.client.hook.registry.SaveHook;
 import java.util.LinkedList;
 import java.util.List;
 
-public class HookManager {
+public final class HookManager {
 
     private final Client client;
     private final List<Hook> hooks = new LinkedList<>();

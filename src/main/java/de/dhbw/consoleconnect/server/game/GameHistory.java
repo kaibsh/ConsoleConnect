@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-public class GameHistory {
+public final class GameHistory {
 
     private final Map<Account, Boolean> players = new HashMap<>();
     private UUID id;

@@ -3,8 +3,6 @@ package de.dhbw.consoleconnect.server.game;
 import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
-import de.dhbw.consoleconnect.server.database.h2.H2Database;
-import de.dhbw.consoleconnect.server.database.h2.registry.H2GameHistoryRepository;
 import de.dhbw.consoleconnect.server.database.repositories.GameHistoryRepository;
 import de.dhbw.consoleconnect.server.game.registry.RockPaperScissorGame;
 import de.dhbw.consoleconnect.server.game.registry.TicTacToeGame;
@@ -12,17 +10,17 @@ import de.dhbw.consoleconnect.server.room.Room;
 
 import java.util.*;
 
-public class GameManager {
+public final class GameManager {
 
     private final Server server;
     private final GameHistoryRepository gameHistoryRepository;
     private final List<Game> games = new LinkedList<>();
     private final List<GameRequest> gameRequests = new LinkedList<>();
 
-    public GameManager(final Server server) {
+    public GameManager(final Server server, final GameHistoryRepository<?> gameHistoryRepository) {
         this.server = server;
-        this.gameHistoryRepository = new H2GameHistoryRepository();
-        this.server.getDatabaseService().registerDatabase((H2Database) this.gameHistoryRepository);
+        this.gameHistoryRepository = gameHistoryRepository;
+        this.server.getDatabaseService().registerDatabase(this.gameHistoryRepository);
     }
 
     private Game resolve(final GameMode gameMode) {

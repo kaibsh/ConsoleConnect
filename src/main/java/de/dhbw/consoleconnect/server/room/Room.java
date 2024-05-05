@@ -5,7 +5,7 @@ import de.dhbw.consoleconnect.server.ServerClient;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Room {
+public final class Room {
 
     private final String name;
     private final String displayName;
@@ -34,7 +34,7 @@ public class Room {
         }
     }
 
-    protected void addClient(final ServerClient client) {
+    void addClient(final ServerClient client) {
         if (client != null) {
             this.clients.add(client);
             client.setRoomName(this.name);
@@ -42,7 +42,7 @@ public class Room {
         }
     }
 
-    protected void removeClient(final ServerClient client) {
+    void removeClient(final ServerClient client) {
         if (client != null && this.clients.contains(client)) {
             this.clients.remove(client);
             client.setRoomName("GLOBAL");

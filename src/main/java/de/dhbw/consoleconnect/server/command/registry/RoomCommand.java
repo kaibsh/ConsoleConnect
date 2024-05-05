@@ -5,7 +5,7 @@ import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 import de.dhbw.consoleconnect.server.room.Room;
 
-public class RoomCommand extends Command {
+public final class RoomCommand extends Command {
 
     public RoomCommand() {
         super("room", "Manages private chat-rooms.");

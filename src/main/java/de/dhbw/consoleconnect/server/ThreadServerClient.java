@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ServerClientThread extends Thread implements ServerClient {
+public final class ThreadServerClient extends Thread implements ServerClient {
 
     private final Server server;
     private final Socket socket;
@@ -20,7 +20,7 @@ public class ServerClientThread extends Thread implements ServerClient {
     private String roomName = "GLOBAL";
     private String reply = "";
 
-    public ServerClientThread(final Server server, final Socket socket) throws IOException {
+    public ThreadServerClient(final Server server, final Socket socket) throws IOException {
         this.server = server;
         this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));

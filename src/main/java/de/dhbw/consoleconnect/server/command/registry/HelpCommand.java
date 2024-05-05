@@ -4,7 +4,7 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 
-public class HelpCommand extends Command {
+public final class HelpCommand extends Command {
 
     public HelpCommand() {
         super("help", "Shows all available commands.");

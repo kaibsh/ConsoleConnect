@@ -1,12 +1,13 @@
 package de.dhbw.consoleconnect.server.database.h2;
 
+import de.dhbw.consoleconnect.server.database.Database;
 import de.dhbw.consoleconnect.server.database.DatabaseService;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class H2DatabaseService implements DatabaseService<H2Database> {
+public final class H2DatabaseService implements DatabaseService<Connection> {
 
     private Connection connection;
 
@@ -20,11 +21,11 @@ public class H2DatabaseService implements DatabaseService<H2Database> {
     }
 
     @Override
-    public final void registerDatabase(final H2Database h2Database) {
+    public void registerDatabase(final Database<Connection> database) {
         try {
             if (this.connection != null && !this.connection.isClosed()) {
-                h2Database.initialize(this.connection);
-                System.out.println("[DATABASE] Successfully initialized database: " + h2Database.getClass().getSimpleName());
+                database.initialize(this.connection);
+                System.out.println("[DATABASE] Successfully initialized database: " + database.getClass().getSimpleName());
             }
         } catch (final SQLException exception) {
             exception.printStackTrace();

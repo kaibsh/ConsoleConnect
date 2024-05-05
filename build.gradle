@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    id 'maven-publish'
+    id 'jacoco'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -9,9 +10,8 @@ repositories {
 
 dependencies {
     runtimeOnly group: 'com.h2database', name: 'h2', version: '2.2.224'
-    testImplementation group: 'io.cucumber', name: 'cucumber-java', version: '7.17.0'
-    testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '7.17.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.2'
 }
 
 sourceSets {
@@ -28,36 +28,29 @@ sourceSets {
     }
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'de.dhbw.consoleconnect.Main'
-    }
-}
-
 test {
     useJUnitPlatform()
 
     testLogging {
         events "passed", "skipped", "failed"
     }
+
+    finalizedBy jacocoTestReport
 }
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacoco')
     }
 }
 
-task cucumber() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'pretty',
-                    '--plugin', 'html:reports/test-report.html',
-                    '--glue', 'de.dhbw.consoleconnect.curcumber', 'src/test/resources/authentication', 'src/test/resources/user']
-        }
+jar {
+    manifest {
+        attributes 'Main-Class': 'de.dhbw.consoleconnect.ConsoleConnect'
     }
 }
 

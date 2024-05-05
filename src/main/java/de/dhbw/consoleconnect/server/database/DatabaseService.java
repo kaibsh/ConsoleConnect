@@ -1,6 +1,6 @@
 package de.dhbw.consoleconnect.server.database;
 
-public interface DatabaseService<T extends Database> {
+public interface DatabaseService<T> {
 
-    void registerDatabase(final T database);
+    void registerDatabase(final Database<T> database);
 }

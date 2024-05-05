@@ -8,7 +8,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientThread extends Thread {
+public final class ClientThread extends Thread {
 
     private final Client client;
     private final Socket socket;

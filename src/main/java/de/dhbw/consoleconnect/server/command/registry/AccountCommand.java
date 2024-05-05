@@ -5,7 +5,7 @@ import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.command.Command;
 
-public class AccountCommand extends Command {
+public final class AccountCommand extends Command {
 
     public AccountCommand() {
         super("account", "Manage your account.");

@@ -1,13 +1,14 @@
 package de.dhbw.consoleconnect.server.database.repositories;
 
 import de.dhbw.consoleconnect.server.account.Account;
+import de.dhbw.consoleconnect.server.database.Database;
 import de.dhbw.consoleconnect.server.game.GameHistory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface GameHistoryRepository {
+public interface GameHistoryRepository<T> extends Database<T> {
 
     GameHistory getGameHistory(final UUID gameId);
 

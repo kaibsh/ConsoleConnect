@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class RoomManager {
+public final class RoomManager {
 
     private final Server server;
     private final List<Room> rooms = new LinkedList<>();
@@ -80,9 +80,10 @@ public class RoomManager {
                 for (final ServerClient client : room.getClients()) {
                     this.leaveRoom(room, true, client);
                 }
+            } else {
+                this.rooms.remove(room);
+                System.out.println("[ROOM] Room '" + room.getName() + "' has been removed.");
             }
-            this.rooms.remove(room);
-            System.out.println("[ROOM] Room '" + room.getName() + "' has been removed.");
         }
     }
 

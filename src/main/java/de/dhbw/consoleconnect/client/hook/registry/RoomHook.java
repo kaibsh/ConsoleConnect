@@ -4,7 +4,7 @@ import de.dhbw.consoleconnect.client.Client;
 import de.dhbw.consoleconnect.client.ClientThread;
 import de.dhbw.consoleconnect.client.hook.Hook;
 
-public class RoomHook implements Hook {
+public final class RoomHook implements Hook {
 
     @Override
     public boolean execute(final Client client, final ClientThread clientThread, final String message) {

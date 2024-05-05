@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StatisticsCommand extends Command {
+public final class StatisticsCommand extends Command {
 
     public StatisticsCommand() {
         super("statistics", "Shows your statistics.");

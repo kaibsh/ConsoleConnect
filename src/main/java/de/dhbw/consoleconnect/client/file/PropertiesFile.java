@@ -3,7 +3,7 @@ package de.dhbw.consoleconnect.client.file;
 import java.io.*;
 import java.util.Properties;
 
-public class PropertiesFile {
+public final class PropertiesFile {
 
     private static final String FILE_NAME = "./build/configuration.properties";
     private final Properties properties;

@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CommandManager {
+public final class CommandManager {
 
     private final Server server;
     private final Map<String, Command> commands = new LinkedHashMap<>();

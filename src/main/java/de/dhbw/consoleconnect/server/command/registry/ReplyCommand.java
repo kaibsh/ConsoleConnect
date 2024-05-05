@@ -4,7 +4,7 @@ import de.dhbw.consoleconnect.server.Server;
 import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.command.Command;
 
-public class ReplyCommand extends Command {
+public final class ReplyCommand extends Command {
 
     public ReplyCommand() {
         super("reply", "Replies to the last received message.");

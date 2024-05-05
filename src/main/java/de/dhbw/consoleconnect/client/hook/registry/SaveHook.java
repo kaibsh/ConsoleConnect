@@ -5,7 +5,7 @@ import de.dhbw.consoleconnect.client.ClientThread;
 import de.dhbw.consoleconnect.client.file.FileHelper;
 import de.dhbw.consoleconnect.client.hook.Hook;
 
-public class SaveHook implements Hook {
+public final class SaveHook implements Hook {
 
     @Override
     public boolean execute(final Client client, final ClientThread clientThread, final String message) {

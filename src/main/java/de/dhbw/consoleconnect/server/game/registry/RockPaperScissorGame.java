@@ -7,7 +7,7 @@ import de.dhbw.consoleconnect.server.game.GameMode;
 
 import java.util.Map;
 
-public class RockPaperScissorGame extends Game {
+public final class RockPaperScissorGame extends Game {
 
     private Map.Entry<ServerClient, Selection> firstPlayerSelection;
     private Map.Entry<ServerClient, Selection> secondPlayerSelection;

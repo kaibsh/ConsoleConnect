@@ -2,19 +2,18 @@ package de.dhbw.consoleconnect.server.database.h2.registry;
 
 import de.dhbw.consoleconnect.server.account.Account;
 import de.dhbw.consoleconnect.server.account.AdminAccount;
-import de.dhbw.consoleconnect.server.database.h2.H2Database;
 import de.dhbw.consoleconnect.server.database.repositories.AccountRepository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
-public class H2AccountRepository extends H2Database implements AccountRepository {
+public final class H2AccountRepository implements AccountRepository<Connection> {
+
+    private Connection connection;
 
     @Override
-    protected final void createTables() {
-        try (final Statement statement = this.getType().createStatement()) {
+    public void initialize(final Connection connection) {
+        this.connection = connection;
+        try (final Statement statement = this.connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS accounts (" +
                     "id INT NOT NULL PRIMARY KEY AUTO_INCREMENT," +
                     "name VARCHAR(255) NOT NULL," +
@@ -28,8 +27,8 @@ public class H2AccountRepository extends H2Database implements AccountRepository
     }
 
     @Override
-    public final Account getAccountById(final int accountId) {
-        try (final PreparedStatement preparedStatement = this.getType().prepareStatement("SELECT * FROM accounts WHERE id = ?")) {
+    public Account getAccountById(final int accountId) {
+        try (final PreparedStatement preparedStatement = this.connection.prepareStatement("SELECT * FROM accounts WHERE id = ?")) {
             preparedStatement.setInt(1, accountId);
             return this.getAccount(preparedStatement);
         } catch (final SQLException exception) {
@@ -39,9 +38,9 @@ public class H2AccountRepository extends H2Database implements AccountRepository
     }
 
     @Override
-    public final Account getAccountByName(final String accountName) {
+    public Account getAccountByName(final String accountName) {
         if (accountName != null && !accountName.isBlank()) {
-            try (final PreparedStatement preparedStatement = this.getType().prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
+            try (final PreparedStatement preparedStatement = this.connection.prepareStatement("SELECT * FROM accounts WHERE name = ?")) {
                 preparedStatement.setString(1, accountName.toLowerCase());
                 return this.getAccount(preparedStatement);
             } catch (final SQLException exception) {
@@ -72,11 +71,11 @@ public class H2AccountRepository extends H2Database implements AccountRepository
     }
 
     @Override
-    public final void saveAccount(final Account account) {
+    public void saveAccount(final Account account) {
         if (account != null) {
             final boolean exists = this.getAccountByName(account.getName()) != null;
             if (exists) {
-                try (final PreparedStatement preparedStatement = this.getType().prepareStatement("UPDATE accounts SET name = ?, password = ?, status = ? WHERE id = ?")) {
+                try (final PreparedStatement preparedStatement = this.connection.prepareStatement("UPDATE accounts SET name = ?, password = ?, status = ? WHERE id = ?")) {
                     preparedStatement.setString(1, account.getName());
                     preparedStatement.setString(2, account.getPassword());
                     preparedStatement.setString(3, account.getStatus());
@@ -86,7 +85,7 @@ public class H2AccountRepository extends H2Database implements AccountRepository
                     exception.printStackTrace();
                 }
             } else {
-                try (final PreparedStatement preparedStatement = this.getType().prepareStatement("INSERT INTO accounts (name, password, status) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                try (final PreparedStatement preparedStatement = this.connection.prepareStatement("INSERT INTO accounts (name, password, status) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, account.getName());
                     preparedStatement.setString(2, account.getPassword());
                     preparedStatement.setString(3, account.getStatus() != null ? account.getStatus() : "Hey, I am using ConsoleConnect!");
@@ -104,9 +103,9 @@ public class H2AccountRepository extends H2Database implements AccountRepository
     }
 
     @Override
-    public final void deleteAccount(final Account account) {
+    public void deleteAccount(final Account account) {
         if (account != null) {
-            try (final PreparedStatement preparedStatement = this.getType().prepareStatement("DELETE FROM accounts WHERE id = ?")) {
+            try (final PreparedStatement preparedStatement = this.connection.prepareStatement("DELETE FROM accounts WHERE id = ?")) {
                 preparedStatement.setInt(1, account.getId());
                 preparedStatement.execute();
             } catch (final SQLException exception) {

@@ -2,7 +2,7 @@ package de.dhbw.consoleconnect.client.file;
 
 import java.io.*;
 
-public class FileHelper {
+public final class FileHelper {
 
     public static String read(final String fileName) {
         final StringBuilder stringBuilder = new StringBuilder();

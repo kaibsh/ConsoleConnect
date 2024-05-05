@@ -1,19 +1,17 @@
 package de.dhbw.consoleconnect.server.account;
 
 import de.dhbw.consoleconnect.server.Server;
-import de.dhbw.consoleconnect.server.database.h2.H2Database;
-import de.dhbw.consoleconnect.server.database.h2.registry.H2AccountRepository;
 import de.dhbw.consoleconnect.server.database.repositories.AccountRepository;
 
-public class AccountManager {
+public final class AccountManager {
 
     private final Server server;
     private final AccountRepository accountRepository;
 
-    public AccountManager(final Server server) {
+    public AccountManager(final Server server, final AccountRepository<?> accountRepository) {
         this.server = server;
-        this.accountRepository = new H2AccountRepository();
-        this.server.getDatabaseService().registerDatabase((H2Database) this.accountRepository);
+        this.accountRepository = accountRepository;
+        this.server.getDatabaseService().registerDatabase(this.accountRepository);
     }
 
     public boolean authenticate(final String name, final String password) {
