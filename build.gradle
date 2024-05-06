@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    runtimeOnly group: 'com.h2database', name: 'h2', version: '2.2.224'
+    implementation group: 'com.h2database', name: 'h2', version: '2.2.224'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.2'
 }

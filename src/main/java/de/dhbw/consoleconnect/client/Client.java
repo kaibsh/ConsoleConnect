@@ -21,7 +21,6 @@ public final class Client {
         this.propertiesFile = new PropertiesFile();
         this.hookManager = new HookManager(this);
         this.scanner = new Scanner(System.in);
-        System.out.println(ignoreClientConfiguration);
         if (!ignoreClientConfiguration && this.propertiesFile.getProperties().containsKey("client.name")) {
             this.clientName = this.propertiesFile.getProperties().getProperty("client.name");
         } else {

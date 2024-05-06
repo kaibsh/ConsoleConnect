@@ -43,7 +43,7 @@ public final class GameHistoryBuilder {
     }
 
     public GameHistoryBuilder addPlayers(final Map<Account, Boolean> players) {
-        players.putAll(players);
+        this.players.putAll(players);
         return this;
     }
 
