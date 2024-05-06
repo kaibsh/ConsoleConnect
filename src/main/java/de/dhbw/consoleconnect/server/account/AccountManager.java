@@ -1,6 +1,7 @@
 package de.dhbw.consoleconnect.server.account;
 
 import de.dhbw.consoleconnect.server.Server;
+import de.dhbw.consoleconnect.server.ServerClient;
 import de.dhbw.consoleconnect.server.database.repositories.AccountRepository;
 
 public final class AccountManager {
@@ -65,6 +66,14 @@ public final class AccountManager {
             return true;
         }
         return false;
+    }
+
+    public void adminMessage(final String message) {
+        if (message != null && !message.isBlank()) {
+            for (final ServerClient client : this.server.getClients()) {
+                client.sendMessage("[*** ADMIN MESSAGE ***]: " + message);
+            }
+        }
     }
 
     public Account getAccountById(final int id) {
