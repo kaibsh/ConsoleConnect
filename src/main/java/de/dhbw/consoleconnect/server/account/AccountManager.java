@@ -8,13 +8,11 @@ public final class AccountManager {
 
     private final Server server;
     private final AccountRepository accountRepository;
-    private final AdminAccount adminAccount;
 
     public AccountManager(final Server server, final AccountRepository<?> accountRepository) {
         this.server = server;
         this.accountRepository = accountRepository;
         this.server.getDatabaseService().registerDatabase(this.accountRepository);
-        this.adminAccount = new AdminAccount(this);
     }
 
     public boolean authenticate(final String name, final String password) {
@@ -90,6 +88,6 @@ public final class AccountManager {
     }
 
     public AdminAccount getAdminAccount() {
-        return this.adminAccount;
+        return new AdminAccount(this);
     }
 }
